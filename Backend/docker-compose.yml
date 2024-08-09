@@ -1,0 +1,32 @@
+services:
+  manager:
+    build:
+      dockerfile: Manager/Dockerfile
+    ports:
+      - 8080:8080
+    networks:
+      - runner
+      - asm
+    depends_on:
+      - runner
+      - asm
+      
+  runner:
+    build:
+      dockerfile: Sandbox/Runner/Dockerfile
+    networks:
+      - runner
+    privileged: true
+
+  asm:
+    build:
+      dockerfile: Sandbox/Asm/Dockerfile
+    networks:
+      - asm
+    privileged: true
+
+networks:
+  runner:
+    driver: bridge
+  asm:
+    driver: bridge

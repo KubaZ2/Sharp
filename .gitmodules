@@ -1,0 +1,3 @@
+[submodule "Mobius.ILasm"]
+	path = Mobius.ILasm
+	url = https://github.com/ashmind/Mobius.ILasm
