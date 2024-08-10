@@ -57,7 +57,7 @@ services
     {
         o.Configuration = new()
         {
-            Intents = GatewayIntents.GuildMessages | GatewayIntents.MessageContent,
+            Intents = GatewayIntents.GuildMessages | GatewayIntents.DirectMessages | GatewayIntents.MessageContent,
         };
     });
 
