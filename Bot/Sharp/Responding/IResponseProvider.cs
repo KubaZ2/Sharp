@@ -15,11 +15,13 @@ public interface IResponseProvider
 
     public T LanguageNotFoundResponse<T>(ulong operationId, string? language) where T : IMessageProperties, new();
 
-    public T Error<T>(string reason) where T : IMessageProperties, new();
+    public T UnknownError<T>(string reason) where T : IMessageProperties, new();
 
     public T DecompilationResponse<T>(ulong operationId, Language language, string decompiledCode, List<Diagnostic> diagnostics) where T : IMessageProperties, new();
 
     public T RunResponse<T>(ulong operationId, Language language, string output, List<Diagnostic> diagnostics) where T : IMessageProperties, new();
 
     public T RateLimitResponse<T>(ulong operationId) where T : IMessageProperties, new();
+
+    public T HelpResponse<T>(ulong operationId) where T : IMessageProperties, new();
 }

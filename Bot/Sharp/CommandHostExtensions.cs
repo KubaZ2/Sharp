@@ -5,9 +5,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using NetCord;
+using NetCord.Hosting.Services.ApplicationCommands;
 
 using NetCord.Hosting.Services.Commands;
 using NetCord.Rest;
+using NetCord.Services.ApplicationCommands;
 using NetCord.Services.Commands;
 
 using Sharp.Compilation;
@@ -78,5 +80,20 @@ public static class CommandHostExtensions
             return responseProvider.DecompilationResultResponse<ReplyMessageProperties>(context.Message.Id, decompilationResult);
 
         return responseProvider.DecompilationResponse<ReplyMessageProperties>(context.Message.Id, targetLanguage, decompiledCode, diagnostics);
+    }
+
+    public static IHost AddHelpCommands(this IHost host)
+    {
+        host.AddCommand<CommandContext>(["help"], (IResponseProvider responseProvider, CommandContext context) =>
+        {
+            return responseProvider.HelpResponse<ReplyMessageProperties>(context.Message.Id);
+        });
+
+        host.AddSlashCommand<SlashCommandContext>("help", "Shows how to use the bot", (IResponseProvider responseProvider, SlashCommandContext context) =>
+        {
+            return responseProvider.HelpResponse<InteractionMessageProperties>(context.Interaction.Id);
+        });
+
+        return host;
     }
 }

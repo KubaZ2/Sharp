@@ -4,11 +4,16 @@ using NetCord.Rest;
 
 namespace Sharp.Diagnostics;
 
-public record DiagnosticsFormatResult(IEnumerable<EmbedProperties>? Embeds, IEnumerable<MessageComponentProperties>? Components, bool Expired = false);
+public abstract record DiagnosticsFormatResult
+{
+    public record Success(List<EmbedFieldProperties> Fields, IEnumerable<MessageComponentProperties>? Components) : DiagnosticsFormatResult;
+
+    public record Expired : DiagnosticsFormatResult;
+}
 
 public interface IDiagnosticsFormatter
 {
-    public DiagnosticsFormatResult FormatDiagnostics(ulong operationId, int page);
+    public DiagnosticsFormatResult FormatDiagnostics(ulong operationId, int page, bool success, int embedContentLength);
 
-    public DiagnosticsFormatResult FormatDiagnostics(ulong operationId, IReadOnlyList<Diagnostic> diagnostics, bool compilationSucceeded);
+    public DiagnosticsFormatResult.Success FormatDiagnostics(ulong operationId, IReadOnlyList<Diagnostic> diagnostics, bool success, int embedContentLength);
 }

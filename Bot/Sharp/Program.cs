@@ -15,6 +15,7 @@ using NetCord.Services.ComponentInteractions;
 using Sharp;
 using Sharp.Backend;
 using Sharp.Compilation;
+using Sharp.CompilationResponse;
 using Sharp.Decompilation;
 using Sharp.Diagnostics;
 using Sharp.RateLimits;
@@ -35,6 +36,7 @@ services
     .AddMemoryCache()
     .AddSingleton<ILanguageFormatProvider, LanguageFormatProvider>()
     .AddSingleton<IDiagnosticsFormatter, DiagnosticsFormatter>()
+    .AddSingleton<ICompilationFormatter, CompilationFormatter>()
     .AddSingleton<IResponseProvider, ResponseProvider>()
     .AddSingleton<IBackendUriProvider, BackendUriProvider>()
     .AddSingleton<IBackendProvider, BackendProvider>()
@@ -67,6 +69,7 @@ var host = builder.Build();
 
 host.AddModules(typeof(Program).Assembly)
     .AddDecompileCommands()
+    .AddHelpCommands()
     .UseGatewayEventHandlers();
 
 await host.RunAsync();

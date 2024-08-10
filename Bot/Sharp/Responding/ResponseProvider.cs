@@ -7,20 +7,20 @@ using NetCord;
 using NetCord.Rest;
 
 using Sharp.Compilation;
+using Sharp.CompilationResponse;
 using Sharp.Decompilation;
-using Sharp.Diagnostics;
 
 namespace Sharp.Responding;
 
-public class ResponseProvider(IOptions<Options> options, IDiagnosticsFormatter diagnosticsFormatter, ILanguageFormatProvider languageFormatProvider) : IResponseProvider
+public class ResponseProvider(IOptions<Options> options, ICompilationFormatter compilationFormatter, ILanguageFormatProvider languageFormatProvider) : IResponseProvider
 {
     public T CompilationResultResponse<T>(ulong operationId, CompilationResult result) where T : IMessageProperties, new()
     {
         return result switch
         {
             CompilationResult.Success => CompilationSuccessResponse<T>(),
-            CompilationResult.CompilerNotFound compilerNotFound => CompilerNotFoundResponse<T>(compilerNotFound.Language),
-            CompilationResult.Fail fail => CompilationFailResponse<T>(operationId, fail.Diagnostics),
+            CompilationResult.CompilerNotFound { Language: var language } => CompilerNotFoundResponse<T>(language),
+            CompilationResult.Fail { Diagnostics: var diagnostics } => CompilationFailResponse<T>(operationId, diagnostics),
             _ => throw new ArgumentOutOfRangeException(nameof(result)),
         };
     }
@@ -39,38 +39,17 @@ public class ResponseProvider(IOptions<Options> options, IDiagnosticsFormatter d
 
     private T CompilerNotFoundResponse<T>(Language language) where T : IMessageProperties, new()
     {
-        T message = new();
-
-        var optionsValue = options.Value;
-
-        message.AddEmbeds(new EmbedProperties().WithTitle($"{optionsValue.Emojis.Error} Compiler not found")
-                                               .WithDescription($"The compiler for the language `{language}` was not found.")
-                                               .WithColor(new(optionsValue.PrimaryColor)));
-
-        return message;
+        return Error<T>("Compiler not found", $"The compiler for the language `{language}` was not found.");
     }
 
     private T CompilationFailResponse<T>(ulong operationId, IReadOnlyList<Diagnostic> diagnostics) where T : IMessageProperties, new()
     {
-        var formatResult = diagnosticsFormatter.FormatDiagnostics(operationId, diagnostics, false);
-
-        if (formatResult.Expired)
-        {
-            T message = new();
-
-            var optionsValue = options.Value;
-
-            message.AddEmbeds(new EmbedProperties().WithTitle($"{optionsValue.Emojis.Error} The diagnostics are no longer available")
-                                                   .WithDescription("The diagnostics for the operation are no longer available.")
-                                                   .WithColor(new(optionsValue.PrimaryColor)));
-
-            return message;
-        }
+        var compilationFormatResult = compilationFormatter.CompilationResponse(operationId, diagnostics, false);
 
         return new()
         {
-            Embeds = formatResult.Embeds,
-            Components = formatResult.Components,
+            Embeds = [compilationFormatResult.Embed],
+            Components = compilationFormatResult.Components,
         };
     }
 
@@ -79,8 +58,8 @@ public class ResponseProvider(IOptions<Options> options, IDiagnosticsFormatter d
         return result switch
         {
             DecompilationResult.Success => DecompilationSuccessResponse<T>(),
-            DecompilationResult.DecompilerNotFound decompilerNotFound => DecompilerNotFoundResponse<T>(decompilerNotFound.Language),
-            DecompilationResult.Fail fail => DecompilationFailResponse<T>(fail.Language),
+            DecompilationResult.DecompilerNotFound { Language: var language } => DecompilerNotFoundResponse<T>(language),
+            DecompilationResult.Fail { Language: var language } => DecompilationFailResponse<T>(language),
             _ => throw new ArgumentOutOfRangeException(nameof(result)),
         };
     }
@@ -99,67 +78,32 @@ public class ResponseProvider(IOptions<Options> options, IDiagnosticsFormatter d
 
     private T DecompilerNotFoundResponse<T>(Language language) where T : IMessageProperties, new()
     {
-        T message = new();
-
-        var optionsValue = options.Value;
-
-        message.AddEmbeds(new EmbedProperties().WithTitle($"{optionsValue.Emojis.Error} Decompiler not found")
-                                               .WithDescription($"The decompiler for the language `{language}` was not found.")
-                                               .WithColor(new(optionsValue.PrimaryColor)));
-
-        return message;
+        return Error<T>("Decompiler not found", $"The decompiler for the language `{language}` was not found.");
     }
 
     private T DecompilationFailResponse<T>(Language language) where T : IMessageProperties, new()
     {
-        T message = new();
-
-        var optionsValue = options.Value;
-
-        message.AddEmbeds(new EmbedProperties().WithTitle($"{optionsValue.Emojis.Error} Decompilation failed")
-                                               .WithDescription($"The decompilation for the language `{language}` failed.")
-                                               .WithColor(new(optionsValue.PrimaryColor)));
-
-        return message;
+        return Error<T>("Decompilation failed", $"The decompilation for the language `{language}` failed.");
     }
 
     public T LanguageNotFoundResponse<T>(ulong operationId, string? language) where T : IMessageProperties, new()
     {
-        T message = new();
-
-        var optionsValue = options.Value;
-
-        message.AddEmbeds(new EmbedProperties().WithTitle($"{optionsValue.Emojis.Error} Language not found")
-                                               .WithDescription($"The language `{language}` was not found.")
-                                               .WithColor(new(optionsValue.PrimaryColor)));
-
-        return message;
+        return Error<T>("Language not found", $"The language `{language}` was not found.");
     }
 
-    public T Error<T>(string reason) where T : IMessageProperties, new()
+    public T UnknownError<T>(string reason) where T : IMessageProperties, new()
     {
-        T message = new();
-
-        var optionsValue = options.Value;
-
-        message.AddEmbeds(new EmbedProperties().WithTitle($"{optionsValue.Emojis.Error} An error occurred")
-                                               .WithDescription(reason)
-                                               .WithColor(new(optionsValue.PrimaryColor)));
-
-        if (message is InteractionMessageProperties interactionMessage)
-            interactionMessage.WithFlags(MessageFlags.Ephemeral);
-
-        return message;
+        return Error<T>("An error occurred", reason);
     }
 
     public T DecompilationResponse<T>(ulong operationId, Language language, string decompiledCode, List<Diagnostic> diagnostics) where T : IMessageProperties, new()
     {
         T message = new();
 
-        var formatResult = diagnosticsFormatter.FormatDiagnostics(operationId, diagnostics, true);
+        var compilationFormatResult = compilationFormatter.CompilationResponse(operationId, diagnostics, true);
 
-        message.Embeds = formatResult.Embeds;
-        message.Components = formatResult.Components;
+        message.Embeds = [compilationFormatResult.Embed];
+        message.Components = compilationFormatResult.Components;
 
         message.AddAttachments(new AttachmentProperties($"source.{languageFormatProvider.GetFormat(language)}", new MemoryStream(Encoding.UTF8.GetBytes(decompiledCode))));
 
@@ -170,10 +114,10 @@ public class ResponseProvider(IOptions<Options> options, IDiagnosticsFormatter d
     {
         T message = new();
 
-        var formatResult = diagnosticsFormatter.FormatDiagnostics(operationId, diagnostics, true);
+        var compilationFormatResult = compilationFormatter.CompilationResponse(operationId, diagnostics, true);
 
-        message.Embeds = formatResult.Embeds;
-        message.Components = formatResult.Components;
+        message.Embeds = [compilationFormatResult.Embed];
+        message.Components = compilationFormatResult.Components;
 
         message.AddAttachments(new AttachmentProperties($"output.txt", new MemoryStream(Encoding.UTF8.GetBytes(output))));
 
@@ -182,13 +126,71 @@ public class ResponseProvider(IOptions<Options> options, IDiagnosticsFormatter d
 
     public T RateLimitResponse<T>(ulong operationId) where T : IMessageProperties, new()
     {
+        return Error<T>("Rate limit exceeded", "You have exceeded the rate limit. Please try again later.");
+    }
+
+    public T HelpResponse<T>(ulong operationId) where T : IMessageProperties, new()
+    {
         T message = new();
 
         var optionsValue = options.Value;
 
-        message.AddEmbeds(new EmbedProperties().WithTitle($"{optionsValue.Emojis.Error} Rate limit exceeded")
-                                               .WithDescription("You have exceeded the rate limit. Please try again later.")
+        message.AddEmbeds(new EmbedProperties().WithDescription(
+                                                $"""
+                                                # Help
+
+                                                ## Commands
+                                                - `#run <architecture?> <code>` - runs the provided code, uses {optionsValue.Backend.DefaultArchitecture} architecture by default
+                                                - `#<language> <code>` - decompiles the provided code to the specified language
+                                                - `#<architecture> <code>` - shows the architecture-specific JIT disassembly of the provided code
+                                                ## Support
+                                                ### Compilation
+                                                - C#
+                                                - IL
+                                                ### Decompilation
+                                                - C#
+                                                - IL
+                                                ### Architectures
+                                                - Arm64
+                                                ## Examples
+                                                #run
+                                                \```c#
+                                                Console.Write("Hello, World!");
+                                                \```
+
+                                                #c#
+                                                \```c#
+                                                Console.Write("Hello, World!");
+                                                \```
+
+                                                #il
+                                                \```c#
+                                                Console.Write("Hello, World!");
+                                                \```
+
+                                                #arm64
+                                                \```c#
+                                                Console.Write("Hello, World!");
+                                                \```
+                                                """)
+                                               .WithColor(new(optionsValue.PrimaryColor))
+                                               .WithTimestamp(Snowflake.CreatedAt(operationId)));
+
+        return message;
+    }
+
+    private T Error<T>(string title, string reason) where T : IMessageProperties, new()
+    {
+        T message = new();
+
+        var optionsValue = options.Value;
+
+        message.AddEmbeds(new EmbedProperties().WithTitle($"{optionsValue.Emojis.Error} {title}")
+                                               .WithDescription(reason)
                                                .WithColor(new(optionsValue.PrimaryColor)));
+
+        if (message is InteractionMessageProperties interactionMessage)
+            interactionMessage.WithFlags(MessageFlags.Ephemeral);
 
         return message;
     }

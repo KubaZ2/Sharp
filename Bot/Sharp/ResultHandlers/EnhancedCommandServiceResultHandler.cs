@@ -30,7 +30,7 @@ public class EnhancedCommandServiceResultHandler<TContext> : ICommandResultHandl
 
         var responseProvider = services.GetRequiredService<IResponseProvider>();
 
-        var response = responseProvider.Error<ReplyMessageProperties>(resultMessage);
+        var response = responseProvider.UnknownError<ReplyMessageProperties>(resultMessage);
 
         return new(message.ReplyAsync(response));
     }

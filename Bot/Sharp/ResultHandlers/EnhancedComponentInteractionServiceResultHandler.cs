@@ -30,7 +30,7 @@ public class EnhancedComponentInteractionServiceResultHandler<TContext> : ICompo
 
         var responseProvider = services.GetRequiredService<IResponseProvider>();
 
-        var response = responseProvider.Error<InteractionMessageProperties>(resultMessage);
+        var response = responseProvider.UnknownError<InteractionMessageProperties>(resultMessage);
 
         return new(interaction.SendResponseAsync(InteractionCallback.Message(response)));
     }
