@@ -15,4 +15,4 @@ WORKDIR /app
 COPY --from=build-env /app .
 
 EXPOSE 8080
-ENTRYPOINT dotnet Sharp.Backend.Manager.dll
+ENTRYPOINT ["dotnet", "Sharp.Backend.Manager.dll"]
