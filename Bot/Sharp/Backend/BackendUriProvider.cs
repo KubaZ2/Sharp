@@ -39,7 +39,7 @@ public class BackendUriProvider : IBackendUriProvider
     {
         Dictionary<Architecture, List<string>> result = [];
 
-        var backendUris = _options.Value.BackendUris;
+        var backendUris = _options.Value.Backend.Uris;
 
         using var client = _clientFactory.CreateClient();
 

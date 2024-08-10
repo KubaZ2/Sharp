@@ -1,5 +1,7 @@
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
 
 using Sharp.Backend.Manager;
@@ -10,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var services = builder.Services;
 
-services
+var optionsBuilder = services
     .AddOptions<Options>()
     .BindConfiguration(nameof(Options))
     .ValidateDataAnnotations();
@@ -18,7 +20,24 @@ services
 services
     .AddSingleton<ISandboxProvider, JailSandboxProvider>();
 
+var options = Unsafe.As<Options>(RuntimeHelpers.GetUninitializedObject(typeof(Options)));
+builder.Configuration.Bind(nameof(Options), options);
+
+var concurrencyPolicyName = "execute-concurrency";
+
+services
+    .AddRateLimiter(o =>
+    {
+        o.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+        o.AddConcurrencyLimiter(concurrencyPolicyName, o =>
+        {
+            o.PermitLimit = options.RateLimits.ConcurrencyLimit;
+        });
+    });
+
 var app = builder.Build();
+
+app.UseRateLimiter();
 
 app.MapGet("/platforms", (IOptions<Options> options) => options.Value.Platforms);
 
@@ -31,7 +50,7 @@ app.MapPost("/{platform}/run", (Architecture platform, HttpContext context, ISan
     }
 
     return sandboxProvider.ExecuteAsync(ContainerFunction.Run, context.Request.Body, context.Response.Body);
-});
+}).RequireRateLimiting(concurrencyPolicyName);
 
 app.MapPost("/{platform}/asm", (Architecture platform, HttpContext context, ISandboxProvider sandboxProvider, IOptions<Options> options) =>
 {
@@ -42,6 +61,6 @@ app.MapPost("/{platform}/asm", (Architecture platform, HttpContext context, ISan
     }
 
     return sandboxProvider.ExecuteAsync(ContainerFunction.Assembly, context.Request.Body, context.Response.Body);
-});
+}).RequireRateLimiting(concurrencyPolicyName);
 
 app.Run();

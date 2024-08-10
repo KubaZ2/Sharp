@@ -8,4 +8,13 @@ public class Options
 {
     [Required]
     public required HashSet<Architecture> Platforms { get; set; }
+
+    [Required]
+    public required RateLimitOptions RateLimits { get; set; }
+}
+
+public class RateLimitOptions
+{
+    [Required]
+    public required int ConcurrencyLimit { get; set; }
 }

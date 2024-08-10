@@ -17,6 +17,7 @@ using Sharp.Backend;
 using Sharp.Compilation;
 using Sharp.Decompilation;
 using Sharp.Diagnostics;
+using Sharp.RateLimits;
 using Sharp.Responding;
 using Sharp.ResultHandlers;
 
@@ -50,6 +51,7 @@ services
     .AddSingleton<ILanguageMatcher, LanguageMatcher>()
     .AddSingleton<ICompilationProvider, CompilationProvider>()
     .AddSingleton<IDecompilationProvider, DecompilationProvider>()
+    .AddSingleton<IRateLimiter, RateLimiter>()
     .AddCommands<CommandContext>(o => o.ResultHandler = new EnhancedCommandServiceResultHandler<CommandContext>())
     .AddApplicationCommands<SlashCommandInteraction, SlashCommandContext>(o => o.ResultHandler = new EnhancedApplicationCommandServiceResultHandler<SlashCommandContext>())
     .AddComponentInteractions<ButtonInteraction, ButtonInteractionContext>(o => o.ResultHandler = new EnhancedComponentInteractionServiceResultHandler<ButtonInteractionContext>())

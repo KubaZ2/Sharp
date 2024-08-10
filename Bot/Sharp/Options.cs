@@ -11,10 +11,7 @@ public class Options
     public required int PrimaryColor { get; set; }
 
     [Required]
-    public required string[] BackendUris { get; set; }
-
-    [Required]
-    public required BackendArchitecture DefaultArchitecture { get; set; }
+    public required BackendOptions Backend { get; set; }
 
     public FormattingOptions Formatting { get; set; } = new();
 }
@@ -41,6 +38,24 @@ public class DiagnosticEmojiOptions
 
     [Required]
     public required string Error { get; set; }
+}
+
+public class BackendOptions
+{
+    [Required]
+    public required string[] Uris { get; set; }
+
+    [Required]
+    public required BackendArchitecture DefaultArchitecture { get; set; }
+
+    public BackendRateLimitOptions RateLimits { get; set; } = new();
+}
+
+public class BackendRateLimitOptions
+{
+    public int Limit { get; set; } = 5;
+
+    public int DurationSeconds { get; set; } = 30;
 }
 
 public class FormattingOptions

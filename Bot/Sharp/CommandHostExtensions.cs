@@ -13,6 +13,7 @@ using NetCord.Services.Commands;
 using Sharp.Compilation;
 
 using Sharp.Decompilation;
+using Sharp.RateLimits;
 using Sharp.Responding;
 
 namespace Sharp;
@@ -38,13 +39,25 @@ public static class CommandHostExtensions
         return host;
     }
 
-    private static async Task<ReplyMessageProperties> HandleAsync(string? languageInput, string code, CommandContext context, IServiceProvider services, Language targetLanguage)
+    private static async Task<ReplyMessageProperties> HandleAsync(string? sourceLanguageInput, string code, CommandContext context, IServiceProvider services, Language targetLanguage)
     {
+        var responseProvider = services.GetRequiredService<IResponseProvider>();
+
+        var sourceLanguage = services.GetRequiredService<ILanguageMatcher>().Match(sourceLanguageInput);
+
+        if (!sourceLanguage.HasValue)
+            return responseProvider.LanguageNotFoundResponse<ReplyMessageProperties>(context.Message.Id, sourceLanguageInput);
+
+        var rateLimitProvider = services.GetRequiredService<IRateLimiter>();
+
+        if (!await rateLimitProvider.TryAcquireAsync(context.User.Id))
+            return responseProvider.RateLimitResponse<ReplyMessageProperties>(context.Message.Id);
+
         var typingTask = context.Client.Rest.EnterTypingStateAsync(context.Message.ChannelId);
 
         try
         {
-            return await HandleAsyncCore(languageInput, code, context, services, targetLanguage);
+            return await HandleAsyncCore(sourceLanguage, code, context, services, responseProvider, targetLanguage);
         }
         finally
         {
@@ -52,15 +65,8 @@ public static class CommandHostExtensions
         }
     }
 
-    private static async Task<ReplyMessageProperties> HandleAsyncCore(string? languageInput, string code, CommandContext context, IServiceProvider services, Language targetLanguage)
+    private static async Task<ReplyMessageProperties> HandleAsyncCore(Language? sourceLanguage, string code, CommandContext context, IServiceProvider services, IResponseProvider responseProvider, Language targetLanguage)
     {
-        var sourceLanguage = services.GetRequiredService<ILanguageMatcher>().Match(languageInput);
-
-        var responseProvider = services.GetRequiredService<IResponseProvider>();
-
-        if (!sourceLanguage.HasValue)
-            return responseProvider.LanguageNotFoundResponse<ReplyMessageProperties>(context.Message.Id, languageInput);
-
         var compilationResult = await services.GetRequiredService<ICompilationProvider>().CompileAsync(sourceLanguage.GetValueOrDefault(), code, null);
 
         if (compilationResult is not CompilationResult.Success { Assembly: var assembly, Diagnostics: var diagnostics })

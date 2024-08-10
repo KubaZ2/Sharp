@@ -8,11 +8,12 @@ using NetCord.Services.Commands;
 
 using Sharp.Backend;
 using Sharp.Compilation;
+using Sharp.RateLimits;
 using Sharp.Responding;
 
 namespace Sharp.Modules;
 
-public class RunCommand(ILanguageMatcher languageMatcher, ICompilationProvider compilationProvider, IResponseProvider responseProvider, IBackendProvider backendProvider, IOptions<Options> options) : CommandModule<CommandContext>
+public class RunCommand(ILanguageMatcher languageMatcher, ICompilationProvider compilationProvider, IResponseProvider responseProvider, IBackendProvider backendProvider, IOptions<Options> options, IRateLimiter rateLimitProvider) : CommandModule<CommandContext>
 {
     [Command("run", Priority = 3)]
     public Task<ReplyMessageProperties> RunAsync(BackendArchitecture architecture, [CommandParameter(Remainder = true)] CodeBlock codeBlock)
@@ -29,22 +30,30 @@ public class RunCommand(ILanguageMatcher languageMatcher, ICompilationProvider c
     [Command("run", Priority = 1)]
     public Task<ReplyMessageProperties> RunAsync([CommandParameter(Remainder = true)] CodeBlock codeBlock)
     {
-        return RunAsync(codeBlock.Formatter, codeBlock.Code, options.Value.DefaultArchitecture);
+        return RunAsync(codeBlock.Formatter, codeBlock.Code, options.Value.Backend.DefaultArchitecture);
     }
 
     [Command("run", Priority = 0)]
     public Task<ReplyMessageProperties> RunAsync([CommandParameter(Remainder = true)] string code)
     {
-        return RunAsync(null, code, options.Value.DefaultArchitecture);
+        return RunAsync(null, code, options.Value.Backend.DefaultArchitecture);
     }
 
-    private async Task<ReplyMessageProperties> RunAsync(string? languageInput, string code, BackendArchitecture architecture)
+    private async Task<ReplyMessageProperties> RunAsync(string? sourceLanguageInput, string code, BackendArchitecture architecture)
     {
+        var sourceLanguage = languageMatcher.Match(sourceLanguageInput);
+
+        if (!sourceLanguage.HasValue)
+            return responseProvider.LanguageNotFoundResponse<ReplyMessageProperties>(Context.Message.Id, sourceLanguageInput);
+
+        if (!await rateLimitProvider.TryAcquireAsync(Context.User.Id))
+            return responseProvider.RateLimitResponse<ReplyMessageProperties>(Context.Message.Id);
+
         var typingTask = Context.Client.Rest.EnterTypingStateAsync(Context.Message.ChannelId);
 
         try
         {
-            return await RunAsyncCore(languageInput, code, architecture);
+            return await RunAsyncCore(sourceLanguage, code, architecture);
         }
         finally
         {
@@ -52,13 +61,8 @@ public class RunCommand(ILanguageMatcher languageMatcher, ICompilationProvider c
         }
     }
 
-    private async Task<ReplyMessageProperties> RunAsyncCore(string? languageInput, string code, BackendArchitecture architecture)
+    private async Task<ReplyMessageProperties> RunAsyncCore(Language? language, string code, BackendArchitecture architecture)
     {
-        var language = languageMatcher.Match(languageInput);
-
-        if (!language.HasValue)
-            return responseProvider.LanguageNotFoundResponse<ReplyMessageProperties>(Context.Message.Id, languageInput);
-
         var compilationResult = await compilationProvider.CompileAsync(language.GetValueOrDefault(), code, CompilationOutput.Executable);
 
         if (compilationResult is not CompilationResult.Success { Assembly: var assembly, Diagnostics: var diagnostics })

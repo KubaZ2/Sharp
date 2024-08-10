@@ -179,4 +179,17 @@ public class ResponseProvider(IOptions<Options> options, IDiagnosticsFormatter d
 
         return message;
     }
+
+    public T RateLimitResponse<T>(ulong operationId) where T : IMessageProperties, new()
+    {
+        T message = new();
+
+        var optionsValue = options.Value;
+
+        message.AddEmbeds(new EmbedProperties().WithTitle($"{optionsValue.Emojis.Error} Rate limit exceeded")
+                                               .WithDescription("You have exceeded the rate limit. Please try again later.")
+                                               .WithColor(new(optionsValue.PrimaryColor)));
+
+        return message;
+    }
 }
