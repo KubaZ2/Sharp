@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UseAppHost>false</UseAppHost>
     <AssemblyName>Sharp.Backend.Manager</AssemblyName>
     <RootNamespace>Sharp.Backend.Manager</RootNamespace>
   </PropertyGroup>

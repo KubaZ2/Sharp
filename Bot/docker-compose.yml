@@ -1,0 +1,5 @@
+services:
+  bot:
+    build:
+      dockerfile: Sharp/Dockerfile
+    restart: always
