@@ -14,7 +14,10 @@ public class BackendProvider(IBackendUriProvider uriProvider, IHttpClientFactory
             response = await client.PostAsync(uri, new StreamContent(assembly));
 
         if (!response.IsSuccessStatusCode)
-            throw new InvalidOperationException($"The backend returned {(int)response.StatusCode} {await response.Content.ReadAsStringAsync()}");
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            throw new InvalidOperationException($"The backend returned {(int)response.StatusCode} {(content.EndsWith('.') ? content.AsSpan()[..^1] : content)}.");
+        }
 
         return await response.Content.ReadAsStringAsync();
     }
