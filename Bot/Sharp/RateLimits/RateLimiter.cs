@@ -23,7 +23,7 @@ public class RateLimiter(IMemoryCache cache, IOptions<Options> options) : IRateL
             }
         }
     }
-    
+
     private readonly object _lock = new();
 
     public ValueTask<bool> TryAcquireAsync(ulong id)

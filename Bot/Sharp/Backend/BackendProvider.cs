@@ -22,7 +22,7 @@ public class BackendProvider(IBackendUriProvider uriProvider, IHttpClientFactory
                     continue;
 
                 var content = response.Content;
-                
+
                 var message = content.Headers.ContentLength.GetValueOrDefault() is 0
                     ? $"The backend returned {(int)response.StatusCode}."
                     : $"The backend returned {(int)response.StatusCode} {await content.ReadAsStringAsync()}.";

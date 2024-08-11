@@ -1,4 +1,3 @@
-
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -20,7 +19,7 @@ public class EnhancedApplicationCommandServiceResultHandler<TContext> : IApplica
             return default;
 
         var resultMessage = failResult.Message;
-        
+
         var interaction = context.Interaction;
 
         if (failResult is IExceptionResult exceptionResult)
