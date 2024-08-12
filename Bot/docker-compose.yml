@@ -1,5 +1,6 @@
 services:
   bot:
     build:
-      dockerfile: Sharp/Dockerfile
+      context: ..
+      dockerfile: Bot/Sharp/Dockerfile
     restart: always

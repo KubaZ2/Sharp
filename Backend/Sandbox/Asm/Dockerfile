@@ -8,16 +8,20 @@ ARG MINUS_PREFIXED_PLATFORM_IF_NOT_AMD64
 FROM mcr.microsoft.com/dotnet/sdk:$DOTNET_SDK_VERSION AS build-env
 WORKDIR /src
 
-COPY Sandbox/Shared/Shared.csproj Sandbox/Shared/Shared.csproj
-RUN dotnet restore Sandbox/Shared/Shared.csproj
+COPY Sharp.Runtime/Sharp.Runtime.csproj Sharp.Runtime/Sharp.Runtime.csproj
+RUN dotnet restore Sharp.Runtime/Sharp.Runtime.csproj
 
-COPY Sandbox/Asm/Asm.csproj Sandbox/Asm/Asm.csproj
-RUN dotnet restore Sandbox/Asm/Asm.csproj
+COPY Backend/Sandbox/Shared/Shared.csproj Backend/Sandbox/Shared/Shared.csproj
+RUN dotnet restore Backend/Sandbox/Shared/Shared.csproj
 
-COPY Sandbox/Shared Sandbox/Shared
-COPY Sandbox/Asm Sandbox/Asm
+COPY Backend/Sandbox/Asm/Asm.csproj Backend/Sandbox/Asm/Asm.csproj
+RUN dotnet restore Backend/Sandbox/Asm/Asm.csproj
 
-RUN dotnet publish Sandbox/Asm/Asm.csproj -c Release -o /app
+COPY Sharp.Runtime Sharp.Runtime
+COPY Backend/Sandbox/Shared Backend/Sandbox/Shared
+COPY Backend/Sandbox/Asm Backend/Sandbox/Asm
+
+RUN dotnet publish Backend/Sandbox/Asm/Asm.csproj -c Release -o /app
 
 FROM mcr.microsoft.com/dotnet-buildtools/prereqs:$OS-$OS_VERSION$MINUS_PREFIXED_PLATFORM_IF_NOT_AMD64 AS runtime-build-env
 WORKDIR /runtime
@@ -42,7 +46,7 @@ FROM pwn.red/jail
 
 COPY --from=runtime / /srv
 
-COPY Sandbox/Asm/start.sh /srv/app/run
+COPY Backend/Sandbox/Asm/start.sh /srv/app/run
 
 ENV JAIL_TIME=10
 ENV JAIL_PIDS=100

@@ -14,7 +14,8 @@ services:
       
   runner:
     build:
-      dockerfile: Sandbox/Runner/Dockerfile
+      context: ..
+      dockerfile: Backend/Sandbox/Runner/Dockerfile
     networks:
       - runner
     privileged: true
@@ -22,7 +23,8 @@ services:
 
   asm:
     build:
-      dockerfile: Sandbox/Asm/Dockerfile
+      context: ..
+      dockerfile: Backend/Sandbox/Asm/Dockerfile
     networks:
       - asm
     privileged: true

@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Shared\Shared.csproj" />
+    <ProjectReference Include="..\..\..\Sharp.Runtime\Sharp.Runtime.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

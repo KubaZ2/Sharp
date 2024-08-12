@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Mobius.ILasm\Mobius.ILASM\Mobius.ILasm.csproj" />
+    <ProjectReference Include="..\..\Sharp.Runtime\Sharp.Runtime.csproj" />
   </ItemGroup>
 
   <ItemGroup>

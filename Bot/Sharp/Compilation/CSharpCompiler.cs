@@ -32,7 +32,7 @@ public class CSharpCompiler : ICompiler
         return syntaxTree.GetRoot().ChildNodes().Any(node => node.IsKind(SyntaxKind.GlobalStatement)) ? _executableOptions : _libraryOptions;
     }
 
-    private static readonly MetadataReference[] _references = [.. Net80.References.All];
+    private static readonly MetadataReference[] _references = [.. Net80.References.All, MetadataReference.CreateFromFile(typeof(JitGenericAttribute).Assembly.Location)];
 
     private static readonly SyntaxTree _globalUsingsSyntaxTree = CreateGlobalUsingsSyntaxTree("System",
                                                                                               "System.Collections.Generic",
@@ -40,7 +40,8 @@ public class CSharpCompiler : ICompiler
                                                                                               "System.Linq",
                                                                                               "System.Net.Http",
                                                                                               "System.Threading",
-                                                                                              "System.Threading.Tasks");
+                                                                                              "System.Threading.Tasks",
+                                                                                              "Sharp");
 
     private static SyntaxTree CreateGlobalUsingsSyntaxTree(params string[] namespaces)
     {
