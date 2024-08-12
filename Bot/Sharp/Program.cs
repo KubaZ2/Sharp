@@ -41,6 +41,7 @@ services
     .AddSingleton<IBackendUriProvider, BackendUriProvider>()
     .AddSingleton<IBackendProvider, BackendProvider>()
     .AddSingleton<ICompiler, CSharpCompiler>()
+    .AddSingleton<ICompiler, VisualBasicCompiler>()
     .AddSingleton<ICompiler, ILCompiler>()
     .AddSingleton<ICompilerProvider, CompilerProvider>()
     .AddSingleton<IDecompiler, CSharpDecompiler>()

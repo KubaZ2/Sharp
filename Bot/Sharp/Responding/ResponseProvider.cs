@@ -146,6 +146,7 @@ public class ResponseProvider(IOptions<Options> options, ICompilationFormatter c
                                                 ## Support
                                                 ### Compilation
                                                 - C#
+                                                - Visual Basic
                                                 - IL
                                                 ### Decompilation
                                                 - C#

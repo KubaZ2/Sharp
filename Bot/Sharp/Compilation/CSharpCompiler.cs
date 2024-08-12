@@ -1,13 +1,11 @@
 ﻿using System.Text;
 
-using Basic.Reference.Assemblies;
-
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
 namespace Sharp.Compilation;
 
-public class CSharpCompiler : ICompiler
+public class CSharpCompiler : RoslynCompiler
 {
     private static readonly CSharpCompilationOptions _executableOptions = new(
         outputKind: OutputKind.ConsoleApplication,
@@ -31,8 +29,6 @@ public class CSharpCompiler : ICompiler
 
         return syntaxTree.GetRoot().ChildNodes().Any(node => node.IsKind(SyntaxKind.GlobalStatement)) ? _executableOptions : _libraryOptions;
     }
-
-    private static readonly MetadataReference[] _references = [.. Net80.References.All, MetadataReference.CreateFromFile(typeof(JitGenericAttribute).Assembly.Location)];
 
     private static readonly SyntaxTree _globalUsingsSyntaxTree = CreateGlobalUsingsSyntaxTree("System",
                                                                                               "System.Collections.Generic",
@@ -58,22 +54,12 @@ public class CSharpCompiler : ICompiler
         return CSharpSyntaxTree.ParseText(stringBuilder.ToString());
     }
 
-    public Language Language => Language.CSharp;
+    public override Language Language => Language.CSharp;
 
-    public ValueTask<bool> CompileAsync(string code, ICollection<Diagnostic> diagnostics, Stream assembly, CompilationOutput? output)
+    protected override Microsoft.CodeAnalysis.Compilation CreateCompilation(string code, CompilationOutput? output)
     {
         var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
-        var compilation = CSharpCompilation.Create("_", [_globalUsingsSyntaxTree, syntaxTree], _references, GetOptions(syntaxTree, output));
-
-        var result = compilation.Emit(assembly);
-
-        var resultDiagnostic = result.Diagnostics;
-        int length = resultDiagnostic.Length;
-
-        for (int i = 0; i < length; i++)
-            diagnostics.Add(resultDiagnostic[i]);
-
-        return new(result.Success);
+        return CSharpCompilation.Create("_", [_globalUsingsSyntaxTree, syntaxTree], _references, GetOptions(syntaxTree, output));
     }
 }
