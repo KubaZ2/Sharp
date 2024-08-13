@@ -20,11 +20,11 @@ public class CompilationFormatter(IDiagnosticsFormatter diagnosticsFormatter, IO
             : ($"{optionsValue.Emojis.Error} Compilation failed", "The compilation failed.");
     }
 
-    public CompilationFormatResult CompilationResponse(ulong operationId, int page, bool success)
+    public CompilationFormatResult CompilationResponse(ulong operationId, bool success, int page)
     {
         var (title, description) = GetContent(success);
 
-        var formatResult = diagnosticsFormatter.FormatDiagnostics(operationId, page, success, title.Length + description.Length);
+        var formatResult = diagnosticsFormatter.FormatDiagnostics(operationId, success, page, title.Length + description.Length);
 
         return formatResult switch
         {
@@ -35,11 +35,11 @@ public class CompilationFormatter(IDiagnosticsFormatter diagnosticsFormatter, IO
         };
     }
 
-    public CompilationFormatResult.Success CompilationResponse(ulong operationId, IReadOnlyList<Diagnostic> diagnostics, bool success)
+    public CompilationFormatResult.Success CompilationResponse(ulong operationId, bool success, IReadOnlyList<Diagnostic> diagnostics)
     {
         var (title, description) = GetContent(success);
 
-        var formatResult = diagnosticsFormatter.FormatDiagnostics(operationId, diagnostics, success, title.Length + description.Length);
+        var formatResult = diagnosticsFormatter.FormatDiagnostics(operationId, success, diagnostics, title.Length + description.Length);
 
         var embed = CreateCompilationEmbed(operationId, formatResult, title, description, 1);
 

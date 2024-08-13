@@ -11,7 +11,7 @@ public class DiagnosticsFormatter(IOptions<Options> options, IMemoryCache cache)
 {
     private record DiagnosticsCacheEntry(IReadOnlyList<Diagnostic> Diagnostics);
 
-    public DiagnosticsFormatResult FormatDiagnostics(ulong operationId, int page, bool success, int embedContentLength)
+    public DiagnosticsFormatResult FormatDiagnostics(ulong operationId, bool success, int page, int embedContentLength)
     {
         var entry = cache.Get<DiagnosticsCacheEntry>(operationId);
 
@@ -20,12 +20,12 @@ public class DiagnosticsFormatter(IOptions<Options> options, IMemoryCache cache)
 
         var fields = CreateDiagnosticsFields(entry.Diagnostics, page, embedContentLength, out var more);
 
-        var actionRow = CreateActionRow(page, success, page is 1, !more);
+        var actionRow = CreateActionRow(success, page, page is 1, !more);
 
         return new DiagnosticsFormatResult.Success(fields, [actionRow]);
     }
 
-    public DiagnosticsFormatResult.Success FormatDiagnostics(ulong operationId, IReadOnlyList<Diagnostic> diagnostics, bool success, int embedContentLength)
+    public DiagnosticsFormatResult.Success FormatDiagnostics(ulong operationId, bool success, IReadOnlyList<Diagnostic> diagnostics, int embedContentLength)
     {
         IReadOnlyList<Diagnostic> visibleDiagnostics = [.. diagnostics.Where(d => d.Severity is not DiagnosticSeverity.Hidden)];
 
@@ -37,7 +37,7 @@ public class DiagnosticsFormatter(IOptions<Options> options, IMemoryCache cache)
         {
             cache.Set(operationId, new DiagnosticsCacheEntry(visibleDiagnostics), new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(30)));
 
-            components = [CreateActionRow(1, success, true, false)];
+            components = [CreateActionRow(success, 1, true, false)];
         }
         else
             components = null;
@@ -45,7 +45,7 @@ public class DiagnosticsFormatter(IOptions<Options> options, IMemoryCache cache)
         return new DiagnosticsFormatResult.Success(fields, components);
     }
 
-    private static ActionRowProperties CreateActionRow(int page, bool success, bool previousDisabled, bool nextDisabled)
+    private static ActionRowProperties CreateActionRow(bool success, int page, bool previousDisabled, bool nextDisabled)
     {
         return new(
         [

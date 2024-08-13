@@ -13,7 +13,7 @@ public abstract record DiagnosticsFormatResult
 
 public interface IDiagnosticsFormatter
 {
-    public DiagnosticsFormatResult FormatDiagnostics(ulong operationId, int page, bool success, int embedContentLength);
+    public DiagnosticsFormatResult FormatDiagnostics(ulong operationId, bool success, int page, int embedContentLength);
 
-    public DiagnosticsFormatResult.Success FormatDiagnostics(ulong operationId, IReadOnlyList<Diagnostic> diagnostics, bool success, int embedContentLength);
+    public DiagnosticsFormatResult.Success FormatDiagnostics(ulong operationId, bool success, IReadOnlyList<Diagnostic> diagnostics, int embedContentLength);
 }

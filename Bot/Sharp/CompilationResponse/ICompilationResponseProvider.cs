@@ -13,7 +13,7 @@ public abstract record CompilationFormatResult
 
 public interface ICompilationFormatter
 {
-    public CompilationFormatResult CompilationResponse(ulong operationId, int page, bool success);
+    public CompilationFormatResult CompilationResponse(ulong operationId, bool success, int page);
 
-    public CompilationFormatResult.Success CompilationResponse(ulong operationId, IReadOnlyList<Diagnostic> diagnostics, bool success);
+    public CompilationFormatResult.Success CompilationResponse(ulong operationId, bool success, IReadOnlyList<Diagnostic> diagnostics);
 }

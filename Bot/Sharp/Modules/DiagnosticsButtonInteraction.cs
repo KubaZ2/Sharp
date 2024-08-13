@@ -7,7 +7,7 @@ using Sharp.Responding;
 
 namespace Sharp.Modules;
 
-public class DiagnosticsButtonInteraction(ICompilationFormatter compilationResponseProvider, IResponseProvider responseProvider) : ComponentInteractionModule<ButtonInteractionContext>
+public class DiagnosticsButtonInteraction(ICompilationFormatter compilationFormatter, IResponseProvider responseProvider) : ComponentInteractionModule<ButtonInteractionContext>
 {
     [ComponentInteraction("diagnostics")]
     public InteractionCallback Diagnostics(bool success, int page)
@@ -16,7 +16,7 @@ public class DiagnosticsButtonInteraction(ICompilationFormatter compilationRespo
         if (message.MessageReference is not { MessageId: var operationId })
             return InteractionCallback.Message(responseProvider.UnknownError<InteractionMessageProperties>("Failed to find reference message."));
 
-        var compilationFormatResult = compilationResponseProvider.CompilationResponse(operationId, page, success);
+        var compilationFormatResult = compilationFormatter.CompilationResponse(operationId, success, page);
 
         return compilationFormatResult switch
         {

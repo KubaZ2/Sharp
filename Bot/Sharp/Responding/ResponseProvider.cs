@@ -44,7 +44,7 @@ public class ResponseProvider(IOptions<Options> options, ICompilationFormatter c
 
     private T CompilationFailResponse<T>(ulong operationId, IReadOnlyList<Diagnostic> diagnostics) where T : IMessageProperties, new()
     {
-        var compilationFormatResult = compilationFormatter.CompilationResponse(operationId, diagnostics, false);
+        var compilationFormatResult = compilationFormatter.CompilationResponse(operationId, false, diagnostics);
 
         return new()
         {
@@ -100,7 +100,7 @@ public class ResponseProvider(IOptions<Options> options, ICompilationFormatter c
     {
         T message = new();
 
-        var compilationFormatResult = compilationFormatter.CompilationResponse(operationId, diagnostics, true);
+        var compilationFormatResult = compilationFormatter.CompilationResponse(operationId, true, diagnostics);
 
         message.Embeds = [compilationFormatResult.Embed];
         message.Components = compilationFormatResult.Components;
@@ -114,7 +114,7 @@ public class ResponseProvider(IOptions<Options> options, ICompilationFormatter c
     {
         T message = new();
 
-        var compilationFormatResult = compilationFormatter.CompilationResponse(operationId, diagnostics, true);
+        var compilationFormatResult = compilationFormatter.CompilationResponse(operationId, true, diagnostics);
 
         message.Embeds = [compilationFormatResult.Embed];
         message.Components = compilationFormatResult.Components;
