@@ -2,5 +2,5 @@
 
 public interface ICompilationProvider
 {
-    public Task<CompilationResult> CompileAsync(Language language, string code, CompilationOutput? output);
+    public Task<CompilationResult> CompileAsync(ulong operationId, Language language, string code, CompilationOutput? output);
 }

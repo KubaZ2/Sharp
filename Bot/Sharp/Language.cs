@@ -8,6 +8,9 @@ public enum Language : byte
     [LanguageAliases("vb", "vb.net", "vbnet", "visualbasic", "visualbasic.net", "visualbasicnet")]
     VisualBasic,
 
+    [LanguageAliases("f#", "fs", "fsharp")]
+    FSharp,
+
     [LanguageAliases("il", "cil", "msil")]
     IL,
 

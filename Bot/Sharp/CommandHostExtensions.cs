@@ -69,17 +69,18 @@ public static class CommandHostExtensions
 
     private static async Task<ReplyMessageProperties> HandleAsyncCore(Language? sourceLanguage, string code, CommandContext context, IServiceProvider services, IResponseProvider responseProvider, Language targetLanguage)
     {
-        var compilationResult = await services.GetRequiredService<ICompilationProvider>().CompileAsync(sourceLanguage.GetValueOrDefault(), code, null);
+        var operationId = context.Message.Id;
+        var compilationResult = await services.GetRequiredService<ICompilationProvider>().CompileAsync(operationId, sourceLanguage.GetValueOrDefault(), code, null);
 
         if (compilationResult is not CompilationResult.Success { Assembly: var assembly, Diagnostics: var diagnostics })
-            return responseProvider.CompilationResultResponse<ReplyMessageProperties>(context.Message.Id, compilationResult);
+            return responseProvider.CompilationResultResponse<ReplyMessageProperties>(operationId, compilationResult);
 
-        var decompilationResult = await services.GetRequiredService<IDecompilationProvider>().DecompileAsync(assembly, targetLanguage);
+        var decompilationResult = await services.GetRequiredService<IDecompilationProvider>().DecompileAsync(operationId, assembly, targetLanguage);
 
         if (decompilationResult is not DecompilationResult.Success { Code: var decompiledCode })
-            return responseProvider.DecompilationResultResponse<ReplyMessageProperties>(context.Message.Id, decompilationResult);
+            return responseProvider.DecompilationResultResponse<ReplyMessageProperties>(operationId, decompilationResult);
 
-        return responseProvider.DecompilationResponse<ReplyMessageProperties>(context.Message.Id, targetLanguage, decompiledCode, diagnostics);
+        return responseProvider.DecompilationResponse<ReplyMessageProperties>(operationId, targetLanguage, decompiledCode, diagnostics);
     }
 
     public static IHost AddHelpCommands(this IHost host)

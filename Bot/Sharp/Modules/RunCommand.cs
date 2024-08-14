@@ -63,13 +63,14 @@ public class RunCommand(ILanguageMatcher languageMatcher, ICompilationProvider c
 
     private async Task<ReplyMessageProperties> RunAsyncCore(Language? language, string code, BackendArchitecture architecture)
     {
-        var compilationResult = await compilationProvider.CompileAsync(language.GetValueOrDefault(), code, CompilationOutput.Executable);
+        var operationId = Context.Message.Id;
+        var compilationResult = await compilationProvider.CompileAsync(operationId, language.GetValueOrDefault(), code, CompilationOutput.Executable);
 
         if (compilationResult is not CompilationResult.Success { Assembly: var assembly, Diagnostics: var diagnostics })
-            return responseProvider.CompilationResultResponse<ReplyMessageProperties>(Context.Message.Id, compilationResult);
+            return responseProvider.CompilationResultResponse<ReplyMessageProperties>(operationId, compilationResult);
 
         var output = await backendProvider.RunAsync((Architecture)architecture, assembly);
 
-        return responseProvider.RunResponse<ReplyMessageProperties>(Context.Message.Id, language.GetValueOrDefault(), output, diagnostics);
+        return responseProvider.RunResponse<ReplyMessageProperties>(operationId, language.GetValueOrDefault(), output, diagnostics);
     }
 }

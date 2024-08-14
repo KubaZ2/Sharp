@@ -10,7 +10,7 @@ public abstract class AsmDecompiler(IBackendProvider backendProvider) : IDecompi
 
     public abstract Architecture Platform { get; }
 
-    public async ValueTask<bool> DecompileAsync(Stream assembly, TextWriter writer)
+    public async ValueTask<bool> DecompileAsync(ulong operationId, Stream assembly, TextWriter writer)
     {
         var asm = await backendProvider.AsmAsync(Platform, assembly);
         await writer.WriteAsync(asm);

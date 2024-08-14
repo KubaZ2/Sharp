@@ -12,12 +12,12 @@ public abstract class RoslynCompiler : ICompiler
 
     protected abstract Microsoft.CodeAnalysis.Compilation CreateCompilation(string code, CompilationOutput? output);
 
-    public ValueTask<bool> CompileAsync(string code, ICollection<Diagnostic> diagnostics, Stream assembly, CompilationOutput? output)
+    public ValueTask<bool> CompileAsync(ulong operationId, string code, ICollection<Diagnostic> diagnostics, Stream assembly, CompilationOutput? output)
     {
         var compilation = CreateCompilation(code, output);
 
         var result = compilation.Emit(assembly);
-
+        
         var resultDiagnostics = result.Diagnostics;
         int length = resultDiagnostics.Length;
 

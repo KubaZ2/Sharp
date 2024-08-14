@@ -5,7 +5,7 @@ namespace Sharp.Compilation;
 
 public class CompilationProvider(ICompilerProvider compilerProvider) : ICompilationProvider
 {
-    public async Task<CompilationResult> CompileAsync(Language language, string code, CompilationOutput? output)
+    public async Task<CompilationResult> CompileAsync(ulong operationId, Language language, string code, CompilationOutput? output)
     {
         var compiler = compilerProvider.GetCompiler(language);
         if (compiler is null)
@@ -13,7 +13,7 @@ public class CompilationProvider(ICompilerProvider compilerProvider) : ICompilat
 
         List<Diagnostic> diagnostics = [];
         MemoryStream assembly = new();
-        var success = await compiler.CompileAsync(code, diagnostics, assembly, output);
+        var success = await compiler.CompileAsync(operationId, code, diagnostics, assembly, output);
 
         if (!success)
             return new CompilationResult.Fail(language, diagnostics);

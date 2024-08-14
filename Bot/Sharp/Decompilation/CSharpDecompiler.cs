@@ -31,7 +31,7 @@ public class CSharpDecompiler : IDecompiler
         AsyncAwait = false,
     };
 
-    public ValueTask<bool> DecompileAsync(Stream assembly, TextWriter writer)
+    public ValueTask<bool> DecompileAsync(ulong operationId, Stream assembly, TextWriter writer)
     {
         using PEFile peFile = new(string.Empty, new PEReader(assembly), MetadataReaderOptions.Default);
 

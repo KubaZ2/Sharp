@@ -15,7 +15,7 @@ public class ILDecompiler(IOptions<Options> options) : IDecompiler
 
     public Language Language => Language.IL;
 
-    public ValueTask<bool> DecompileAsync(Stream assembly, TextWriter writer)
+    public ValueTask<bool> DecompileAsync(ulong operationId, Stream assembly, TextWriter writer)
     {
         using PEFile peFile = new(string.Empty, new PEReader(assembly), MetadataReaderOptions.Default);
 
