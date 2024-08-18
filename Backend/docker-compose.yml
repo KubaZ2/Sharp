@@ -10,7 +10,7 @@ services:
     depends_on:
       - runner
       - asm
-    restart: always
+    restart: unless-stopped
       
   runner:
     build:
@@ -19,7 +19,7 @@ services:
     networks:
       - runner
     privileged: true
-    restart: always
+    restart: unless-stopped
 
   asm:
     build:
@@ -28,7 +28,7 @@ services:
     networks:
       - asm
     privileged: true
-    restart: always
+    restart: unless-stopped
 
 networks:
   runner:

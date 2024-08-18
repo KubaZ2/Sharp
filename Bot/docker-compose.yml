@@ -3,4 +3,4 @@ services:
     build:
       context: ..
       dockerfile: Bot/Sharp/Dockerfile
-    restart: always
+    restart: unless-stopped
