@@ -147,6 +147,7 @@ public class ResponseProvider(IOptions<Options> options, ICompilationFormatter c
                                                 ### Compilation
                                                 - C#
                                                 - Visual Basic
+                                                - F#
                                                 - IL
                                                 ### Decompilation
                                                 - C#
@@ -160,8 +161,8 @@ public class ResponseProvider(IOptions<Options> options, ICompilationFormatter c
                                                 \```
 
                                                 #c#
-                                                \```c#
-                                                Console.Write("Hello, World!");
+                                                \```f#
+                                                printf "Hello, World!"
                                                 \```
 
                                                 #il

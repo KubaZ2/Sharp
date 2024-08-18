@@ -29,7 +29,7 @@ public class FSharpCompiler : ICompiler
         FileSystemAutoOpens.FileSystem = _fileSystem = new VirtualFileSystem();
 
         var references = Net80.References.All.Select(r => r.FilePath!).Where(p => p is not "System.Runtime.dll").Select(p => $"-r:{p}");
-        _baseArguments = [string.Empty, "--targetprofile:netcore", "--noframework", "--nowin32manifest", .. references, "-o"];
+        _baseArguments = [string.Empty, "--targetprofile:netcore", "--noframework", "--nowin32manifest", .. references, $"-r:{typeof(JitGenericAttribute).Assembly.Location}"];
     }
 
     private const string SourceName = "_.fs";
@@ -37,7 +37,7 @@ public class FSharpCompiler : ICompiler
 
     private static string[] GetArguments(string projectPath)
     {
-        return [.. _baseArguments, $"{projectPath}/{OutputName}", $"{projectPath}/{SourceName}"];
+        return [.. _baseArguments, $"-o:{projectPath}/{OutputName}", $"{projectPath}/{SourceName}"];
     }
 
     public async ValueTask<bool> CompileAsync(ulong operationId, string code, ICollection<Diagnostic> diagnostics, Stream assembly, CompilationOutput? output)
