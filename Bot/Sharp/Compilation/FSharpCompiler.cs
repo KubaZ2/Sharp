@@ -28,8 +28,8 @@ public class FSharpCompiler : ICompiler
     {
         FileSystemAutoOpens.FileSystem = _fileSystem = new VirtualFileSystem();
 
-        var references = Net80.References.All.Select(r => r.FilePath!).Where(p => p != "mscorlib.dll").Select(p => $"-r:{p}");
-        _baseArguments = [string.Empty, "--noframework", "--nowin32manifest", .. references, "-o"];
+        var references = Net80.References.All.Select(r => r.FilePath!).Where(p => p is not "System.Runtime.dll").Select(p => $"-r:{p}");
+        _baseArguments = [string.Empty, "--targetprofile:netcore", "--noframework", "--nowin32manifest", .. references, "-o"];
     }
 
     private const string SourceName = "_.fs";
@@ -355,7 +355,7 @@ public class FSharpCompiler : ICompiler
 
             private static bool IsLast(ReadOnlySpan<char> segment, ReadOnlySpan<char> fullPath)
             {
-                return Unsafe.ByteOffset(ref Unsafe.Add(ref MemoryMarshal.GetReference(fullPath), fullPath.Length), ref Unsafe.Add(ref MemoryMarshal.GetReference(segment), segment.Length)) == 0;
+                return Unsafe.AreSame(ref Unsafe.Add(ref MemoryMarshal.GetReference(fullPath), fullPath.Length), ref Unsafe.Add(ref MemoryMarshal.GetReference(segment), segment.Length));
             }
 
             private static IEnumerable<Range> Segment(ReadOnlyMemory<char> path)

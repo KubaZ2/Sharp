@@ -16,7 +16,7 @@ COPY Bot/Sharp Bot/Sharp
 
 RUN dotnet publish Bot/Sharp/Sharp.csproj -c Release -o /app
 
-FROM mcr.microsoft.com/dotnet/runtime:8.0
+FROM mcr.microsoft.com/dotnet/sdk:8.0
 WORKDIR /app
 
 COPY --from=build-env /app .
