@@ -87,12 +87,12 @@ public static class CommandHostExtensions
     {
         host.AddCommand<CommandContext>(["help"], (IResponseProvider responseProvider, CommandContext context) =>
         {
-            return responseProvider.HelpResponse<ReplyMessageProperties>(context.Message.Id);
+            return responseProvider.HelpResponseAsync<ReplyMessageProperties>(context.Message.Id).AsTask();
         });
 
         host.AddSlashCommand<SlashCommandContext>("help", "Shows how to use the bot", (IResponseProvider responseProvider, SlashCommandContext context) =>
         {
-            return responseProvider.HelpResponse<InteractionMessageProperties>(context.Interaction.Id);
+            return responseProvider.HelpResponseAsync<InteractionMessageProperties>(context.Interaction.Id).AsTask();
         });
 
         return host;

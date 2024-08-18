@@ -106,6 +106,13 @@ public class BackendUriProvider : IBackendUriProvider
         }
     }
 
+    public async ValueTask<IEnumerable<Architecture>> GetPlatformsAsync()
+    {
+        await _startCompletionSource.Task;
+
+        return ImmutableCollectionsMarshal.AsArray(_uris!.Keys) ?? [];
+    }
+
     private static Uri FormatUri(ReadOnlySpan<char> baseUri, ReadOnlySpan<char> endpoint)
     {
         return new(FormatUriString(baseUri, endpoint));

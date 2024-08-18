@@ -23,5 +23,5 @@ public interface IResponseProvider
 
     public T RateLimitResponse<T>(ulong operationId) where T : IMessageProperties, new();
 
-    public T HelpResponse<T>(ulong operationId) where T : IMessageProperties, new();
+    public ValueTask<T> HelpResponseAsync<T>(ulong operationId) where T : IMessageProperties, new();
 }

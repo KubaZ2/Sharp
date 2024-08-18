@@ -6,13 +6,15 @@ using Microsoft.Extensions.Options;
 using NetCord;
 using NetCord.Rest;
 
+using Sharp.Backend;
+
 using Sharp.Compilation;
 using Sharp.CompilationResponse;
 using Sharp.Decompilation;
 
 namespace Sharp.Responding;
 
-public class ResponseProvider(IOptions<Options> options, ICompilationFormatter compilationFormatter, ILanguageFormatProvider languageFormatProvider) : IResponseProvider
+public class ResponseProvider(IOptions<Options> options, ICompilationFormatter compilationFormatter, ILanguageFormatProvider languageFormatProvider, IBackendUriProvider backendUriProvider) : IResponseProvider
 {
     public T CompilationResultResponse<T>(ulong operationId, CompilationResult result) where T : IMessageProperties, new()
     {
@@ -129,11 +131,13 @@ public class ResponseProvider(IOptions<Options> options, ICompilationFormatter c
         return Error<T>("Rate limit exceeded", "You have exceeded the rate limit. Please try again later.");
     }
 
-    public T HelpResponse<T>(ulong operationId) where T : IMessageProperties, new()
+    public async ValueTask<T> HelpResponseAsync<T>(ulong operationId) where T : IMessageProperties, new()
     {
         T message = new();
 
         var optionsValue = options.Value;
+
+        var architectures = await backendUriProvider.GetPlatformsAsync();
 
         message.AddEmbeds(new EmbedProperties().WithDescription(
                                                 $"""
@@ -153,7 +157,7 @@ public class ResponseProvider(IOptions<Options> options, ICompilationFormatter c
                                                 - C#
                                                 - IL
                                                 ### Architectures
-                                                - Arm64
+                                                {string.Join('\n', architectures.Select(a => $"- {a}"))}
                                                 ## Examples
                                                 #run
                                                 \```c#

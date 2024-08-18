@@ -5,4 +5,6 @@ namespace Sharp.Backend;
 public interface IBackendUriProvider
 {
     public ValueTask<Uri?> GetUriAsync(Architecture platform, string endpoint);
+
+    public ValueTask<IEnumerable<Architecture>> GetPlatformsAsync();
 }
