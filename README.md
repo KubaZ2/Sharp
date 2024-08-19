@@ -6,6 +6,8 @@ A Discord bot designed to help you with .NET development.
 
 - [Invitation Link](https://discord.com/oauth2/authorize?client_id=803324257194082314&permissions=274877908992&scope=bot)
 - [Support Discord](https://discord.gg/meaSHTGyUH)
+- [Terms of Service](TOS.md)
+- [Privacy Policy](PRIVACY.md)
 
 ## ✨ Features
 
