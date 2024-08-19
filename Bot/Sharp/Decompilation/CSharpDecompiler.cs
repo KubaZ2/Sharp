@@ -26,9 +26,9 @@ public class CSharpDecompiler : IDecompiler
 
     public Language Language => Language.CSharp;
 
-    private static readonly DecompilerSettings _settings = new(LanguageVersion.Preview)
+    private static readonly DecompilerSettings _settings = new(LanguageVersion.CSharp1)
     {
-        AsyncAwait = false,
+        UseRefLocalsForAccurateOrderOfEvaluation = true,
     };
 
     public ValueTask<bool> DecompileAsync(ulong operationId, Stream assembly, TextWriter writer)
