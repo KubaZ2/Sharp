@@ -29,6 +29,8 @@ public class CSharpDecompiler : IDecompiler
     private static readonly DecompilerSettings _settings = new(LanguageVersion.CSharp1)
     {
         UseRefLocalsForAccurateOrderOfEvaluation = true,
+        UsingStatement = false,
+        FileScopedNamespaces = true,
     };
 
     public ValueTask<bool> DecompileAsync(ulong operationId, Stream assembly, TextWriter writer)
