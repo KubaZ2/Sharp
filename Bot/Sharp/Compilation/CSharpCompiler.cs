@@ -10,12 +10,14 @@ public class CSharpCompiler : RoslynCompiler
     private static readonly CSharpCompilationOptions _executableOptions = new(
         outputKind: OutputKind.ConsoleApplication,
         optimizationLevel: OptimizationLevel.Release,
-        allowUnsafe: true);
+        allowUnsafe: true,
+        nullableContextOptions: NullableContextOptions.Enable);
 
     private static readonly CSharpCompilationOptions _libraryOptions = new(
         outputKind: OutputKind.DynamicallyLinkedLibrary,
         optimizationLevel: OptimizationLevel.Release,
-        allowUnsafe: true);
+        allowUnsafe: true,
+        nullableContextOptions: NullableContextOptions.Enable);
 
     private static CSharpCompilationOptions GetOptions(SyntaxTree syntaxTree, CompilationOutput? output)
     {
