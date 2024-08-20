@@ -6,6 +6,7 @@ using NetCord;
 using NetCord.Rest;
 using NetCord.Services.Commands;
 
+using Sharp.Attachments;
 using Sharp.Backend;
 using Sharp.Compilation;
 using Sharp.RateLimits;
@@ -13,30 +14,47 @@ using Sharp.Responding;
 
 namespace Sharp.Modules;
 
-public class RunCommand(ILanguageMatcher languageMatcher, ICompilationProvider compilationProvider, IResponseProvider responseProvider, IBackendProvider backendProvider, IOptions<Options> options, IRateLimiter rateLimitProvider) : CommandModule<CommandContext>
+public class RunCommand(ILanguageMatcher languageMatcher, ICompilationProvider compilationProvider, IResponseProvider responseProvider, IBackendProvider backendProvider, IOptions<Options> options, IRateLimiter rateLimitProvider, IAttachmentCodeProvider attachmentCodeProvider) : CommandModule<CommandContext>
 {
-    [Command("run", Priority = 3)]
+    [Command("run", Priority = 5)]
     public Task<ReplyMessageProperties> RunAsync(BackendArchitecture architecture, [CommandParameter(Remainder = true)] CodeBlock codeBlock)
     {
         return RunAsync(codeBlock.Formatter, codeBlock.Code, architecture);
     }
 
-    [Command("run", Priority = 2)]
+    [Command("run", Priority = 4)]
     public Task<ReplyMessageProperties> RunAsync(BackendArchitecture architecture, [CommandParameter(Remainder = true)] string code)
     {
         return RunAsync(null, code, architecture);
     }
 
-    [Command("run", Priority = 1)]
+    [Command("run", Priority = 3)]
     public Task<ReplyMessageProperties> RunAsync([CommandParameter(Remainder = true)] CodeBlock codeBlock)
     {
         return RunAsync(codeBlock.Formatter, codeBlock.Code, options.Value.Backend.DefaultArchitecture);
     }
 
-    [Command("run", Priority = 0)]
+    [Command("run", Priority = 2)]
+    public async Task<ReplyMessageProperties> RunAsync(BackendArchitecture architecture)
+    {
+        var result = await attachmentCodeProvider.GetCodeAsync(Context.Message.Attachments.Values);
+
+        if (result is not AttachmentCodeResult.Success { Language: var language, Code: var code })
+            return responseProvider.AttachmentCodeResultResponse<ReplyMessageProperties>(Context.Message.Id, result);
+
+        return await RunAsync(language, code, architecture);
+    }
+
+    [Command("run", Priority = 1)]
     public Task<ReplyMessageProperties> RunAsync([CommandParameter(Remainder = true)] string code)
     {
         return RunAsync(null, code, options.Value.Backend.DefaultArchitecture);
+    }
+
+    [Command("run", Priority = 0)]
+    public Task<ReplyMessageProperties> RunAsync()
+    {
+        return RunAsync(options.Value.Backend.DefaultArchitecture);
     }
 
     private async Task<ReplyMessageProperties> RunAsync(string? sourceLanguageInput, string code, BackendArchitecture architecture)

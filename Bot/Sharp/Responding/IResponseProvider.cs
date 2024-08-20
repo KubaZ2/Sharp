@@ -2,6 +2,7 @@
 
 using NetCord.Rest;
 
+using Sharp.Attachments;
 using Sharp.Compilation;
 using Sharp.Decompilation;
 
@@ -22,6 +23,8 @@ public interface IResponseProvider
     public T RunResponse<T>(ulong operationId, Language language, string output, List<Diagnostic> diagnostics) where T : IMessageProperties, new();
 
     public T RateLimitResponse<T>(ulong operationId) where T : IMessageProperties, new();
+
+    public T AttachmentCodeResultResponse<T>(ulong operationId, AttachmentCodeResult result) where T : IMessageProperties, new();
 
     public ValueTask<T> HelpResponseAsync<T>(ulong operationId) where T : IMessageProperties, new();
 }

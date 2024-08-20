@@ -1,19 +1,17 @@
 using System.Reflection;
 
 using Microsoft.Extensions.DependencyInjection;
-
 using Microsoft.Extensions.Hosting;
 
 using NetCord;
 using NetCord.Hosting.Services.ApplicationCommands;
-
 using NetCord.Hosting.Services.Commands;
 using NetCord.Rest;
 using NetCord.Services.ApplicationCommands;
 using NetCord.Services.Commands;
 
+using Sharp.Attachments;
 using Sharp.Compilation;
-
 using Sharp.Decompilation;
 using Sharp.RateLimits;
 using Sharp.Responding;
@@ -30,11 +28,21 @@ public static class CommandHostExtensions
             host.AddCommand<CommandContext>(aliases, (IServiceProvider services, CommandContext context, [CommandParameter(Remainder = true)] CodeBlock codeBlock) =>
             {
                 return HandleAsync(codeBlock.Formatter, codeBlock.Code, context, services, language);
-            }, priority: 1);
+            }, priority: 2);
 
             host.AddCommand<CommandContext>(aliases, (IServiceProvider services, CommandContext context, [CommandParameter(Remainder = true)] string code) =>
             {
                 return HandleAsync(null, code, context, services, language);
+            }, priority: 1);
+
+            host.AddCommand<CommandContext>(aliases, async (IServiceProvider services, IAttachmentCodeProvider attachmentCodeProvider, CommandContext context) =>
+            {
+                var result = await attachmentCodeProvider.GetCodeAsync(context.Message.Attachments.Values);
+
+                if (result is not AttachmentCodeResult.Success { Language: var sourceLanguage, Code: var code })
+                    return services.GetRequiredService<IResponseProvider>().AttachmentCodeResultResponse<ReplyMessageProperties>(context.Message.Id, result);
+
+                return await HandleAsync(sourceLanguage, code, context, services, language);
             }, priority: 0);
         }
 

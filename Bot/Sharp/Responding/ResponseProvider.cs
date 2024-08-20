@@ -6,8 +6,8 @@ using Microsoft.Extensions.Options;
 using NetCord;
 using NetCord.Rest;
 
+using Sharp.Attachments;
 using Sharp.Backend;
-
 using Sharp.Compilation;
 using Sharp.CompilationResponse;
 using Sharp.Decompilation;
@@ -131,23 +131,53 @@ public class ResponseProvider(IOptions<Options> options, ICompilationFormatter c
         return Error<T>("Rate limit exceeded", "You have exceeded the rate limit. Please try again later.");
     }
 
-    public async ValueTask<T> HelpResponseAsync<T>(ulong operationId) where T : IMessageProperties, new()
+    public T AttachmentCodeResultResponse<T>(ulong operationId, AttachmentCodeResult result) where T : IMessageProperties, new()
+    {
+        return result switch
+        {
+            AttachmentCodeResult.Success => AttachmentCodeSuccessResponse<T>(),
+            AttachmentCodeResult.CodeNotFound => AttachmentCodeNotFoundResponse<T>(),
+            _ => throw new ArgumentOutOfRangeException(nameof(result)),
+        };
+    }
+
+    private T AttachmentCodeSuccessResponse<T>() where T : IMessageProperties, new()
     {
         T message = new();
 
         var optionsValue = options.Value;
 
+        message.AddEmbeds(new EmbedProperties().WithTitle($"{optionsValue.Emojis.Success} Code found successfully")
+                                               .WithColor(new(optionsValue.PrimaryColor)));
+
+        return message;
+    }
+
+    private T AttachmentCodeNotFoundResponse<T>() where T : IMessageProperties, new()
+    {
+        return Error<T>("Code not found", "No code was provided.");
+    }
+
+    public async ValueTask<T> HelpResponseAsync<T>(ulong operationId) where T : IMessageProperties, new()
+    {
+        T message = new();
+
+        var optionsValue = options.Value;
+        var emojis = optionsValue.Emojis;
+
         var architectures = await backendUriProvider.GetPlatformsAsync();
 
         message.AddEmbeds(new EmbedProperties().WithDescription(
                                                 $"""
-                                                # Help
+                                                # {emojis.Help} Help
 
-                                                ## Commands
+                                                ## {emojis.Command} Commands
                                                 - `#run <architecture?> <code>` - runs the provided code, uses {optionsValue.Backend.DefaultArchitecture} architecture by default
                                                 - `#<language> <code>` - decompiles the provided code to the specified language
                                                 - `#<architecture> <code>` - shows the architecture-specific JIT disassembly of the provided code
-                                                ## Support
+
+                                                The code can be provided as is, as a code block or as an attachment.
+                                                ## {emojis.Support} Support
                                                 ### Compilation
                                                 - C#
                                                 - Visual Basic
@@ -158,7 +188,7 @@ public class ResponseProvider(IOptions<Options> options, ICompilationFormatter c
                                                 - IL
                                                 ### Architectures
                                                 {string.Join('\n', architectures.Select(a => $"- {a}"))}
-                                                ## Examples
+                                                ## {emojis.Example} Examples
                                                 #run
                                                 \```c#
                                                 Console.Write("Hello, World!");

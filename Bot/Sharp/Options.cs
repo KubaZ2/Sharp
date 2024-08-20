@@ -26,6 +26,18 @@ public class EmojiOptions
 
     [Required]
     public required string Error { get; set; }
+
+    [Required]
+    public required string Help { get; set; }
+
+    [Required]
+    public required string Command { get; set; }
+
+    [Required]
+    public required string Support { get; set; }
+
+    [Required]
+    public required string Example { get; set; }
 }
 
 public class DiagnosticEmojiOptions
