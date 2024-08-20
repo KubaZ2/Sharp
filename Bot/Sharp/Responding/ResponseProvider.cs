@@ -7,6 +7,7 @@ using NetCord;
 using NetCord.Rest;
 
 using Sharp.Attachments;
+using Sharp.Names;
 using Sharp.Backend;
 using Sharp.Compilation;
 using Sharp.CompilationResponse;
@@ -14,7 +15,7 @@ using Sharp.Decompilation;
 
 namespace Sharp.Responding;
 
-public class ResponseProvider(IOptions<Options> options, ICompilationFormatter compilationFormatter, ILanguageFormatProvider languageFormatProvider, IBackendUriProvider backendUriProvider) : IResponseProvider
+public class ResponseProvider(IOptions<Options> options, ICompilationFormatter compilationFormatter, ILanguageFormatProvider languageFormatProvider, IBackendUriProvider backendUriProvider, INameFormatter nameFormatter, ICompilerProvider compilerProvider, IDecompilerProvider decompilerProvider) : IResponseProvider
 {
     public T CompilationResultResponse<T>(ulong operationId, CompilationResult result) where T : IMessageProperties, new()
     {
@@ -41,7 +42,7 @@ public class ResponseProvider(IOptions<Options> options, ICompilationFormatter c
 
     private T CompilerNotFoundResponse<T>(Language language) where T : IMessageProperties, new()
     {
-        return Error<T>("Compiler not found", $"The compiler for the language `{language}` was not found.");
+        return Error<T>("Compiler not found", $"The compiler for the language {nameFormatter.Format(language)} was not found.");
     }
 
     private T CompilationFailResponse<T>(ulong operationId, IReadOnlyList<Diagnostic> diagnostics) where T : IMessageProperties, new()
@@ -80,17 +81,17 @@ public class ResponseProvider(IOptions<Options> options, ICompilationFormatter c
 
     private T DecompilerNotFoundResponse<T>(Language language) where T : IMessageProperties, new()
     {
-        return Error<T>("Decompiler not found", $"The decompiler for the language `{language}` was not found.");
+        return Error<T>("Decompiler not found", $"The decompiler for the language {nameFormatter.Format(language)} was not found.");
     }
 
     private T DecompilationFailResponse<T>(Language language) where T : IMessageProperties, new()
     {
-        return Error<T>("Decompilation failed", $"The decompilation for the language `{language}` failed.");
+        return Error<T>("Decompilation failed", $"The decompilation for the language {nameFormatter.Format(language)} failed.");
     }
 
     public T LanguageNotFoundResponse<T>(ulong operationId, string? language) where T : IMessageProperties, new()
     {
-        return Error<T>("Language not found", $"The language `{language}` was not found.");
+        return Error<T>("Language not found", $"The language {language} was not found.");
     }
 
     public T UnknownError<T>(string reason) where T : IMessageProperties, new()
@@ -165,6 +166,8 @@ public class ResponseProvider(IOptions<Options> options, ICompilationFormatter c
         var optionsValue = options.Value;
         var emojis = optionsValue.Emojis;
 
+        var defaultArchitectureFormatted = nameFormatter.Format(optionsValue.Backend.DefaultArchitecture);
+
         var architectures = await backendUriProvider.GetPlatformsAsync();
 
         message.AddEmbeds(new EmbedProperties().WithDescription(
@@ -172,39 +175,36 @@ public class ResponseProvider(IOptions<Options> options, ICompilationFormatter c
                                                 # {emojis.Help} Help
 
                                                 ## {emojis.Command} Commands
-                                                - `#run <architecture?> <code>` - runs the provided code, uses {optionsValue.Backend.DefaultArchitecture} architecture by default
+                                                - `#run <architecture?> <code>` - runs the provided code, uses {defaultArchitectureFormatted} architecture by default
                                                 - `#<language> <code>` - decompiles the provided code to the specified language
                                                 - `#<architecture> <code>` - shows the architecture-specific JIT disassembly of the provided code
 
                                                 The code can be provided as is, as a code block or as an attachment.
                                                 ## {emojis.Support} Support
                                                 ### Compilation
-                                                - C#
-                                                - Visual Basic
-                                                - F#
-                                                - IL
+                                                {string.Join('\n', compilerProvider.SupportedLanguages.Select(l => $"- {nameFormatter.Format(l)}"))}
                                                 ### Decompilation
-                                                - C#
-                                                - IL
+                                                {string.Join('\n', decompilerProvider.SupportedLanguages.Where(l => l <= Language.IL).Select(l => $"- {nameFormatter.Format(l)}"))}
                                                 ### Architectures
-                                                {string.Join('\n', architectures.Select(a => $"- {a}"))}
+                                                {string.Join('\n', architectures.Select(a => $"- {nameFormatter.Format((BackendArchitecture)a)}"))}
                                                 ## {emojis.Example} Examples
+                                                ### Running C# code:
                                                 #run
                                                 \```c#
                                                 Console.Write("Hello, World!");
                                                 \```
-
+                                                ### Decompiling F# code to C#:
                                                 #c#
                                                 \```f#
                                                 printf "Hello, World!"
                                                 \```
-
+                                                ### Decompiling C# code to IL:
                                                 #il
                                                 \```c#
                                                 Console.Write("Hello, World!");
                                                 \```
-
-                                                #arm64
+                                                ### Showing JIT disassembly of C# code for {defaultArchitectureFormatted}:
+                                                #{defaultArchitectureFormatted.ToLowerInvariant()}
                                                 \```c#
                                                 Console.Write("Hello, World!");
                                                 \```

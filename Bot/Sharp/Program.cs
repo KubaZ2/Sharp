@@ -14,6 +14,7 @@ using NetCord.Services.ComponentInteractions;
 
 using Sharp;
 using Sharp.Attachments;
+using Sharp.Names;
 using Sharp.Backend;
 using Sharp.Compilation;
 using Sharp.CompilationResponse;
@@ -35,6 +36,7 @@ services
 services
     .AddHttpClient()
     .AddMemoryCache()
+    .AddSingleton<INameFormatter, NameFormatter>()
     .AddSingleton<IAttachmentCodeProvider, AttachmentCodeProvider>()
     .AddSingleton<ILanguageFormatProvider, LanguageFormatProvider>()
     .AddSingleton<IDiagnosticsFormatter, DiagnosticsFormatter>()
