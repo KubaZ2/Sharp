@@ -30,7 +30,7 @@
     ````
     #run
     ```c#
-    Console.WriteLine("Hello, World!");
+    Console.Write("Hello, World!");
     ```
     ````
   - **Output**: 
