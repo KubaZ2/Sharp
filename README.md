@@ -60,17 +60,6 @@ The code can be provided as is, as a code block or as an attachment.
 
 ## 🛎️ Support
 
-### Compilation
-
-- **C#**
-- **VB**
-- **F#**
-- **IL**
-
-### Decompilation
-- **C#**
-- **IL**
-
-### Architectures
-- **x64**
-- **ARM64**
+- **Compilation**: **C#**, **VB**, **F#**, **IL**
+- **Decompilation**: **C#**, **IL**
+- **Architectures**: **x64**, **ARM64**
