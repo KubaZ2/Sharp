@@ -212,12 +212,9 @@ public class ResponseProvider(IOptions<Options> options, IOptions<CommandService
                                                     \```
                                                 The code can be provided as is, as a code block or as an attachment.
                                                 ## {emojis.Support} Support
-                                                ### Compilation
-                                                {string.Join('\n', compilerProvider.SupportedLanguages.Select(l => $"- **{nameFormatter.Format(l)}**"))}
-                                                ### Decompilation
-                                                {string.Join('\n', decompilerProvider.SupportedLanguages.Where(l => l <= Language.IL).Select(l => $"- **{nameFormatter.Format(l)}**"))}
-                                                ### Architectures
-                                                {string.Join('\n', architectures.Select(a => $"- **{nameFormatter.Format((BackendArchitecture)a)}**"))}
+                                                - **Compilation**: {string.Join(", ", compilerProvider.SupportedLanguages.Select(l => $"**{nameFormatter.Format(l)}**"))}
+                                                - **Decompilation**: {string.Join(", ", decompilerProvider.SupportedLanguages.Where(l => l <= Language.IL).Select(l => $"**{nameFormatter.Format(l)}**"))}
+                                                - **Architectures**: {string.Join(", ", architectures.Select(a => $"**{nameFormatter.Format((BackendArchitecture)a)}**"))}
                                                 """)
                                                .WithColor(new(optionsValue.PrimaryColor))
                                                .WithTimestamp(Snowflake.CreatedAt(operationId)));
