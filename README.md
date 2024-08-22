@@ -11,6 +11,57 @@ A Discord bot designed to help you with .NET development.
 
 ## ✨ Features
 
-- Showing JIT disassembly of your code for the specified architecture
 - Running your code
 - Decompiling your code to the specified language
+- Showing JIT disassembly of your code for the specified architecture
+
+## 📝 Commands
+
+- `#run <architecture?> <code>` — runs the provided code, uses ARM64 architecture by default
+- `#<language> <code>` — decompiles the provided code to the specified language
+- `#<architecture> <code>` — shows the architecture-specific JIT disassembly of the provided code
+
+The code can be provided as is, as a code block or as an attachment.
+
+## 🛎️ Support
+
+### Compilation
+
+- C#
+- VB
+- F#
+- IL
+
+### Decompilation
+- C#
+- IL
+
+### Architectures
+- x64
+- ARM64
+
+## 📘 Examples
+
+### Running C# code:
+#run  
+\```c#  
+Console.Write("Hello, World!");  
+\```
+
+### Decompiling F# code to C#:
+#c#  
+\```f#  
+printf "Hello, World!"  
+\```
+
+### Decompiling C# code to IL:
+#il  
+\```c#  
+Console.Write("Hello, World!");  
+\```
+
+### Showing JIT disassembly of C# code for ARM64:
+#arm64  
+\```c#  
+Console.Write("Hello, World!");  
+\```
