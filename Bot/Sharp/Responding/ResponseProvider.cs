@@ -215,6 +215,8 @@ public class ResponseProvider(IOptions<Options> options, IOptions<CommandService
                                                 - **Compilation**: {string.Join(", ", compilerProvider.SupportedLanguages.Select(l => $"**{nameFormatter.Format(l)}**"))}
                                                 - **Decompilation**: {string.Join(", ", decompilerProvider.SupportedLanguages.Where(l => l <= Language.IL).Select(l => $"**{nameFormatter.Format(l)}**"))}
                                                 - **Architectures**: {string.Join(", ", architectures.Select(a => $"**{nameFormatter.Format((BackendArchitecture)a)}**"))}
+                                                
+                                                -# Not affiliated with Microsoft or the .NET Foundation
                                                 """)
                                                .WithColor(new(optionsValue.PrimaryColor))
                                                .WithTimestamp(Snowflake.CreatedAt(operationId)));
