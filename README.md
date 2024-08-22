@@ -25,21 +25,21 @@
 
 ## 📝 Commands
 
-- `#run <architecture?> <code>` — Runs the provided code, using ARM64 architecture by default. 
-  - **Example**: 
+- `#run <architecture?> <code>` — Runs the provided code, using ARM64 architecture by default.
+  - **Example**:
     ````
     #run
     ```c#
     Console.Write("Hello, World!");
     ```
     ````
-  - **Output**: 
+  - **Output**:
     ```
     Hello, World!
     ```
 
-- `#<language> <code>` — Decompiles the provided code to the specified language. 
-  - **Example**: 
+- `#<language> <code>` — Decompiles the provided code to the specified language.
+  - **Example**:
     ````
     #c#
     ```f#
@@ -48,7 +48,7 @@
     ````
 
 - `#<architecture> <code>` — Shows the architecture-specific JIT disassembly of the provided code.
-  - **Example**: 
+  - **Example**:
     ````
     #arm64
     ```c#
