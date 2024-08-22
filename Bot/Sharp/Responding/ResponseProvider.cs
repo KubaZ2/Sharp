@@ -12,10 +12,12 @@ using Sharp.Backend;
 using Sharp.Compilation;
 using Sharp.CompilationResponse;
 using Sharp.Decompilation;
+using NetCord.Hosting.Services.Commands;
+using NetCord.Services.Commands;
 
 namespace Sharp.Responding;
 
-public class ResponseProvider(IOptions<Options> options, ICompilationFormatter compilationFormatter, ILanguageFormatProvider languageFormatProvider, IBackendUriProvider backendUriProvider, INameFormatter nameFormatter, ICompilerProvider compilerProvider, IDecompilerProvider decompilerProvider) : IResponseProvider
+public class ResponseProvider(IOptions<Options> options, IOptions<CommandServiceOptions<CommandContext>> discordOptions, ICompilationFormatter compilationFormatter, ILanguageFormatProvider languageFormatProvider, IBackendUriProvider backendUriProvider, INameFormatter nameFormatter, ICompilerProvider compilerProvider, IDecompilerProvider decompilerProvider) : IResponseProvider
 {
     public T CompilationResultResponse<T>(ulong operationId, CompilationResult result) where T : IMessageProperties, new()
     {
@@ -170,14 +172,18 @@ public class ResponseProvider(IOptions<Options> options, ICompilationFormatter c
 
         var architectures = await backendUriProvider.GetPlatformsAsync();
 
+        var discordOptionsValue = discordOptions.Value;
+
+        var prefix = discordOptionsValue.Prefixes is { Count: > 0 } prefixes ? prefixes[0] : discordOptionsValue.Prefix;
+
         message.AddEmbeds(new EmbedProperties().WithDescription(
                                                 $"""
                                                 # {emojis.Help} Help
 
                                                 ## {emojis.Command} Commands
-                                                - `#run <architecture?> <code>` - runs the provided code, uses {defaultArchitectureFormatted} architecture by default
-                                                - `#<language> <code>` - decompiles the provided code to the specified language
-                                                - `#<architecture> <code>` - shows the architecture-specific JIT disassembly of the provided code
+                                                - `{prefix}run <architecture?> <code>` - runs the provided code, uses {defaultArchitectureFormatted} architecture by default
+                                                - `{prefix}<language> <code>` - decompiles the provided code to the specified language
+                                                - `{prefix}<architecture> <code>` - shows the architecture-specific JIT disassembly of the provided code
 
                                                 The code can be provided as is, as a code block or as an attachment.
                                                 ## {emojis.Support} Support
@@ -189,22 +195,22 @@ public class ResponseProvider(IOptions<Options> options, ICompilationFormatter c
                                                 {string.Join('\n', architectures.Select(a => $"- {nameFormatter.Format((BackendArchitecture)a)}"))}
                                                 ## {emojis.Example} Examples
                                                 ### Running C# code:
-                                                #run
+                                                {prefix}run
                                                 \```c#
                                                 Console.Write("Hello, World!");
                                                 \```
                                                 ### Decompiling F# code to C#:
-                                                #c#
+                                                {prefix}c#
                                                 \```f#
                                                 printf "Hello, World!"
                                                 \```
                                                 ### Decompiling C# code to IL:
-                                                #il
+                                                {prefix}il
                                                 \```c#
                                                 Console.Write("Hello, World!");
                                                 \```
                                                 ### Showing JIT disassembly of C# code for {defaultArchitectureFormatted}:
-                                                #{defaultArchitectureFormatted.ToLowerInvariant()}
+                                                {prefix}{defaultArchitectureFormatted.ToLowerInvariant()}
                                                 \```c#
                                                 Console.Write("Hello, World!");
                                                 \```
