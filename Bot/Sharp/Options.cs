@@ -13,6 +13,9 @@ public class Options
     [Required]
     public required BackendOptions Backend { get; set; }
 
+    [Required]
+    public required InformationOptions Information { get; set; }
+
     public FormattingOptions Formatting { get; set; } = new();
 }
 
@@ -31,13 +34,13 @@ public class EmojiOptions
     public required string Help { get; set; }
 
     [Required]
+    public required string Link { get; set; }
+
+    [Required]
     public required string Command { get; set; }
 
     [Required]
     public required string Support { get; set; }
-
-    [Required]
-    public required string Example { get; set; }
 }
 
 public class DiagnosticEmojiOptions
@@ -68,6 +71,27 @@ public class BackendRateLimitOptions
     public int Limit { get; set; } = 5;
 
     public int DurationSeconds { get; set; } = 30;
+}
+
+public class InformationOptions
+{
+    [Required]
+    public required string Description { get; set; }
+
+    [Required]
+    public required string InvitationLink { get; set; }
+
+    [Required]
+    public required string GitHubRepository { get; set; }
+
+    [Required]
+    public required string SupportDiscord { get; set; }
+
+    [Required]
+    public required string TermsOfService { get; set; }
+
+    [Required]
+    public required string PrivacyPolicy { get; set; }
 }
 
 public class FormattingOptions

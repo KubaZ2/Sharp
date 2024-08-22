@@ -167,6 +167,7 @@ public class ResponseProvider(IOptions<Options> options, IOptions<CommandService
 
         var optionsValue = options.Value;
         var emojis = optionsValue.Emojis;
+        var information = optionsValue.Information;
 
         var defaultArchitectureFormatted = nameFormatter.Format(optionsValue.Backend.DefaultArchitecture);
 
@@ -179,41 +180,44 @@ public class ResponseProvider(IOptions<Options> options, IOptions<CommandService
         message.AddEmbeds(new EmbedProperties().WithDescription(
                                                 $"""
                                                 # {emojis.Help} Help
-
+                                                {information.Description}
+                                                ## {emojis.Link} Links
+                                                - [Invitation Link]({information.InvitationLink})
+                                                - [GitHub Repository]({information.GitHubRepository})
+                                                - [Support Discord]({information.SupportDiscord})
+                                                - [Terms of Service]({information.TermsOfService})
+                                                - [Privacy Policy]({information.PrivacyPolicy})
                                                 ## {emojis.Command} Commands
-                                                - `{prefix}run <architecture?> <code>` - runs the provided code, uses {defaultArchitectureFormatted} architecture by default
-                                                - `{prefix}<language> <code>` - decompiles the provided code to the specified language
-                                                - `{prefix}<architecture> <code>` - shows the architecture-specific JIT disassembly of the provided code
-
+                                                - `{prefix}run <architecture?> <code>` — Runs the provided code, using {defaultArchitectureFormatted} architecture by default. 
+                                                  - **Example**:  
+                                                    {prefix}run  
+                                                    \```c#  
+                                                    Console.Write("Hello, World!");  
+                                                    \```
+                                                  - **Output**:
+                                                    ```
+                                                    Hello, World!
+                                                    ```
+                                                - `{prefix}<language> <code>` — Decompiles the provided code to the specified language.
+                                                  - **Example**:  
+                                                    {prefix}c#  
+                                                    \```f#  
+                                                    printf "Hello, World!"  
+                                                    \```
+                                                - `{prefix}<architecture> <code>` — Shows the architecture-specific JIT disassembly of the provided code.
+                                                  - **Example**:  
+                                                    {prefix}{defaultArchitectureFormatted.ToLowerInvariant()}  
+                                                    \```c#  
+                                                    Console.Write("Hello, World!");  
+                                                    \```
                                                 The code can be provided as is, as a code block or as an attachment.
                                                 ## {emojis.Support} Support
                                                 ### Compilation
-                                                {string.Join('\n', compilerProvider.SupportedLanguages.Select(l => $"- {nameFormatter.Format(l)}"))}
+                                                {string.Join('\n', compilerProvider.SupportedLanguages.Select(l => $"- **{nameFormatter.Format(l)}**"))}
                                                 ### Decompilation
-                                                {string.Join('\n', decompilerProvider.SupportedLanguages.Where(l => l <= Language.IL).Select(l => $"- {nameFormatter.Format(l)}"))}
+                                                {string.Join('\n', decompilerProvider.SupportedLanguages.Where(l => l <= Language.IL).Select(l => $"- **{nameFormatter.Format(l)}**"))}
                                                 ### Architectures
-                                                {string.Join('\n', architectures.Select(a => $"- {nameFormatter.Format((BackendArchitecture)a)}"))}
-                                                ## {emojis.Example} Examples
-                                                ### Running C# code:
-                                                {prefix}run
-                                                \```c#
-                                                Console.Write("Hello, World!");
-                                                \```
-                                                ### Decompiling F# code to C#:
-                                                {prefix}c#
-                                                \```f#
-                                                printf "Hello, World!"
-                                                \```
-                                                ### Decompiling C# code to IL:
-                                                {prefix}il
-                                                \```c#
-                                                Console.Write("Hello, World!");
-                                                \```
-                                                ### Showing JIT disassembly of C# code for {defaultArchitectureFormatted}:
-                                                {prefix}{defaultArchitectureFormatted.ToLowerInvariant()}
-                                                \```c#
-                                                Console.Write("Hello, World!");
-                                                \```
+                                                {string.Join('\n', architectures.Select(a => $"- **{nameFormatter.Format((BackendArchitecture)a)}**"))}
                                                 """)
                                                .WithColor(new(optionsValue.PrimaryColor))
                                                .WithTimestamp(Snowflake.CreatedAt(operationId)));
