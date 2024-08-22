@@ -62,15 +62,15 @@ The code can be provided as is, as a code block or as an attachment.
 
 ### Compilation
 
-- C#
-- VB
-- F#
-- IL
+- **C#**
+- **VB**
+- **F#**
+- **IL**
 
 ### Decompilation
-- C#
-- IL
+- **C#**
+- **IL**
 
 ### Architectures
-- x64
-- ARM64
+- **x64**
+- **ARM64**
