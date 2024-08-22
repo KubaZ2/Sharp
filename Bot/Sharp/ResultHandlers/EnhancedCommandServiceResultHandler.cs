@@ -16,7 +16,7 @@ public class EnhancedCommandServiceResultHandler<TContext> : ICommandResultHandl
 {
     public ValueTask HandleResultAsync(IExecutionResult result, TContext context, GatewayClient client, ILogger logger, IServiceProvider services)
     {
-        if (result is not IFailResult failResult)
+        if (result is not IFailResult failResult || result is NotFoundResult)
             return default;
 
         var resultMessage = failResult.Message;
