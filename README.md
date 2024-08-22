@@ -1,6 +1,6 @@
 # 🤖 Sharp
 
-**Sharp** is a powerful Discord bot designed to assist .NET developers by running code snippets, decompiling code to various languages, and providing JIT disassembly for specified architectures.
+**Sharp** is a powerful Discord bot that runs, decompiles, and shows JIT disassembly of .NET languages.
 
 [**Invite it now!**](https://discord.com/oauth2/authorize?client_id=803324257194082314&permissions=274877908992&scope=bot)
 
