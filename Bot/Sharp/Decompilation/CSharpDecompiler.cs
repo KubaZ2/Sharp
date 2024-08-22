@@ -28,6 +28,18 @@ public class CSharpDecompiler : IDecompiler
 
     private static readonly DecompilerSettings _settings = new(LanguageVersion.CSharp1)
     {
+        ArrayInitializers = false,
+        AutomaticEvents = false,
+        DecimalConstants = false,
+        DoWhileStatement = false,
+        FixedBuffers = false,
+        ForEachStatement = false,
+        ForStatement = false,
+        FunctionPointers = true,
+        LockStatement = false,
+        SparseIntegerSwitch = false,
+        StringConcat = false,
+        SwitchStatementOnString = false,
         UseRefLocalsForAccurateOrderOfEvaluation = true,
         UsingStatement = false,
         FileScopedNamespaces = true,
