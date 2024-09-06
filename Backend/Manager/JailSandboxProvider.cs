@@ -16,8 +16,8 @@ public class JailSandboxProvider : ISandboxProvider
 
         (string host, int port) = function switch
         {
-            ContainerFunction.Run => ("backend-runner-1", 5000),
-            ContainerFunction.Assembly => ("backend-asm-1", 6000),
+            ContainerFunction.Run => ("sharp-backend-runner", 5000),
+            ContainerFunction.Assembly => ("sharp-backend-asm", 6000),
             _ => ThrowOutOfRange(),
         };
 

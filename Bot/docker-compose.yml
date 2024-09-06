@@ -1,5 +1,6 @@
 services:
   bot:
+    container_name: sharp-bot
     build:
       context: ..
       dockerfile: Bot/Sharp/Dockerfile

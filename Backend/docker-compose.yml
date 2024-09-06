@@ -1,5 +1,6 @@
 services:
   manager:
+    container_name: sharp-backend-manager
     build:
       dockerfile: Manager/Dockerfile
     volumes:
@@ -16,6 +17,7 @@ services:
     restart: unless-stopped
       
   runner:
+    container_name: sharp-backend-runner
     build:
       context: ..
       dockerfile: Backend/Sandbox/Runner/Dockerfile
@@ -26,6 +28,7 @@ services:
     restart: unless-stopped
 
   asm:
+    container_name: sharp-backend-asm
     build:
       context: ..
       dockerfile: Backend/Sandbox/Asm/Dockerfile
