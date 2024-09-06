@@ -13,6 +13,11 @@ jobs:
       image: ubuntu:latest
 
     steps:
+    - name: Install git on container
+      run: |
+        apt update
+        apt install -y git
+
     - uses: actions/checkout@v4
       with:
         submodules: true
@@ -45,8 +50,13 @@ jobs:
       packages: write
 
     steps:
-    - name: Delete huge unnecessary tools folder
-      run: rm -rf /opt/hostedtoolcache
+    # - name: Delete huge unnecessary tools folder
+    #   run: rm -rf /opt/hostedtoolcache
+
+    - name: Install git on container
+      run: |
+        apt update
+        apt install -y git
 
     - uses: actions/checkout@v4
       with:
