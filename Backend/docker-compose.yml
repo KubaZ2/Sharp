@@ -2,6 +2,9 @@ services:
   manager:
     build:
       dockerfile: Manager/Dockerfile
+    volumes:
+      - ./appsettings.json:/app/appsettings.json:ro
+    image: ghcr.io/kubaz2/sharp/manager:latest
     ports:
       - 8080:8080
     networks:
@@ -16,6 +19,7 @@ services:
     build:
       context: ..
       dockerfile: Backend/Sandbox/Runner/Dockerfile
+    image: ghcr.io/kubaz2/sharp/runner:latest
     networks:
       - runner
     privileged: true
@@ -25,6 +29,7 @@ services:
     build:
       context: ..
       dockerfile: Backend/Sandbox/Asm/Dockerfile
+    image: ghcr.io/kubaz2/sharp/asm:latest
     networks:
       - asm
     privileged: true

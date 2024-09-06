@@ -3,4 +3,7 @@ services:
     build:
       context: ..
       dockerfile: Bot/Sharp/Dockerfile
+    volumes:
+      - ./appsettings.json:/app/appsettings.json:ro
+    image: ghcr.io/kubaz2/sharp/bot:latest
     restart: unless-stopped
