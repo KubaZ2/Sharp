@@ -29,6 +29,9 @@ jobs:
     # - name: Test
     #   run: dotnet test --no-build --verbosity normal
 
+    - name: Delete huge unnecessary tools folder
+      run: rm -rf /opt/hostedtoolcache
+
     - uses: actions/checkout@v4
       with:
         submodules: true
