@@ -2,6 +2,8 @@ services:
   manager:
     build:
       dockerfile: Manager/Dockerfile
+    volumes:
+      - ./appsettings.json:/app/appsettings.json:ro
     image: ghcr.io/kubaz2/sharp/manager:latest
     ports:
       - 8080:8080
