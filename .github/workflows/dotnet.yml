@@ -9,6 +9,9 @@ jobs:
   test:
     runs-on: self-hosted
 
+    container:
+      image: ubuntu:latest
+
     steps:
     - uses: actions/checkout@v4
       with:
@@ -33,7 +36,10 @@ jobs:
 
     needs: test
 
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+
+    container:
+      image: ubuntu:latest
 
     permissions:
       packages: write
