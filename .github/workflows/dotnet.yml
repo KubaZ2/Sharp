@@ -13,10 +13,10 @@ jobs:
       image: ubuntu:latest
 
     steps:
-    - name: Install git on container
+    - name: Install dependencies
       run: |
         apt update
-        apt install -y git
+        apt install -y git curl
 
     - uses: actions/checkout@v4
       with:
@@ -53,10 +53,10 @@ jobs:
     # - name: Delete huge unnecessary tools folder
     #   run: rm -rf /opt/hostedtoolcache
 
-    - name: Install git on container
+    - name: Install dependencies
       run: |
         apt update
-        apt install -y git
+        apt install -y git curl
 
     - uses: actions/checkout@v4
       with:
