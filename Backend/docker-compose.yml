@@ -2,7 +2,7 @@ services:
   manager:
     build:
       dockerfile: Manager/Dockerfile
-    image: manager:latest
+    image: ghcr.io/kubaz2/sharp/manager:latest
     ports:
       - 8080:8080
     networks:
@@ -17,7 +17,7 @@ services:
     build:
       context: ..
       dockerfile: Backend/Sandbox/Runner/Dockerfile
-    image: runner:latest
+    image: ghcr.io/kubaz2/sharp/runner:latest
     networks:
       - runner
     privileged: true
@@ -27,7 +27,7 @@ services:
     build:
       context: ..
       dockerfile: Backend/Sandbox/Asm/Dockerfile
-    image: asm:latest
+    image: ghcr.io/kubaz2/sharp/asm:latest
     networks:
       - asm
     privileged: true
