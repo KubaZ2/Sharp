@@ -33,5 +33,6 @@ jobs:
     - name: Build and push
       uses: docker/bake-action@v5
       with:
-        source: Backend/docker-compose.yml
+        source: .
+        workdir: Backend
         push: true
