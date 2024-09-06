@@ -1,7 +1,7 @@
 ARG DOTNET_SDK_VERSION=8.0
 ARG DOTNET_RUNTIME_VERSION=8.0.7
 
-FROM mcr.microsoft.com/dotnet/sdk:$DOTNET_SDK_VERSION AS build-env
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:$DOTNET_SDK_VERSION AS build-env
 WORKDIR /src
 
 COPY Sharp.Runtime/Sharp.Runtime.csproj Sharp.Runtime/Sharp.Runtime.csproj

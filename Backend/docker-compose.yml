@@ -2,6 +2,7 @@ services:
   manager:
     build:
       dockerfile: Manager/Dockerfile
+    image: manager:latest
     ports:
       - 8080:8080
     networks:
@@ -16,6 +17,7 @@ services:
     build:
       context: ..
       dockerfile: Backend/Sandbox/Runner/Dockerfile
+    image: runner:latest
     networks:
       - runner
     privileged: true
@@ -25,6 +27,7 @@ services:
     build:
       context: ..
       dockerfile: Backend/Sandbox/Asm/Dockerfile
+    image: asm:latest
     networks:
       - asm
     privileged: true
