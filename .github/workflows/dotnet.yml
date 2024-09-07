@@ -86,7 +86,3 @@ jobs:
           *.cache-from=type=gha
           *.cache-to=type=gha,mode=max
           asm.args.MINUS_PREFIXED_PLATFORM_IF_NOT_AMD64=${{ env.MINUS_PREFIXED_PLATFORM_IF_NOT_AMD64 }}
-
-    - name: Print logs
-      if: failure()
-      run: cat /runtime/.tools/rootfs/x64/debootstrap/debootstrap.log
