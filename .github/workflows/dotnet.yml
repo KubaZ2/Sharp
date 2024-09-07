@@ -83,6 +83,6 @@ jobs:
         push: true
         set: |
           *.platform=linux/amd64,linux/arm64
-          asm.args.MINUS_PREFIXED_PLATFORM_IF_NOT_AMD64=${MINUS_PREFIXED_PLATFORM_IF_NOT_AMD64}
           *.cache-from=type=gha
           *.cache-to=type=gha,mode=max
+          asm.args.MINUS_PREFIXED_PLATFORM_IF_NOT_AMD64=${{ env.MINUS_PREFIXED_PLATFORM_IF_NOT_AMD64 }}
