@@ -40,16 +40,16 @@ RUN if [ $TARGETARCH = $BUILDARCH ]; then \
         ./build.sh clr -c Checked; \
     else \
         case $TARGETARCH in \
-            arm64) ALTERNATIVE_ARCH=aarch64 ;; \
-            arm) ALTERNATIVE_ARCH=arm ;; \
-            amd64) ALTERNATIVE_ARCH=x86-64 ;; \
-            x86) ALTERNATIVE_ARCH=i686 ;; \
+            arm64) BINUTILS_ARCH=aarch64 DOTNET_ARCH=arm64 ;; \
+            arm) BINUTILS_ARCH=arm DOTNET_ARCH=arm ;; \
+            amd64) BINUTILS_ARCH=x86-64 DOTNET_ARCH=x64 ;; \
+            x86) BINUTILS_ARCH=i686 DOTNET_ARCH=x86 ;; \
             *) echo "Unsupported target architecture: $TARGETARCH" && exit 1 ;; \
         esac && \
-        sudo apt update -y && sudo apt install -y qemu-user-static binfmt-support debootstrap binutils-$ALTERNATIVE_ARCH-linux-gnu && \
+        sudo apt update -y && sudo apt install -y qemu-user-static binfmt-support debootstrap binutils-$BINUTILS_ARCH-linux-gnu && \
         ln -s /usr/bin/llvm-objcopy-14 /usr/bin/llvm-objcopy && \
-        sudo ./eng/common/cross/build-rootfs.sh $TARGETARCH $OS_CODENAME && \
-        ROOTFS_DIR=/runtime/.tools/rootfs/$TARGETARCH ./build.sh clr -c Checked -a $TARGETARCH --cross; \
+        sudo ./eng/common/cross/build-rootfs.sh $DOTNET_ARCH $OS_CODENAME && \
+        ROOTFS_DIR=/runtime/.tools/rootfs/$DOTNET_ARCH ./build.sh clr -c Checked -a $DOTNET_ARCH --cross; \
     fi
 
 FROM mcr.microsoft.com/dotnet/runtime:$DOTNET_RUNTIME_VERSION-$OS_CODENAME AS runtime
