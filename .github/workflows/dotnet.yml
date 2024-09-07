@@ -45,10 +45,10 @@ jobs:
     # - name: Delete huge unnecessary tools folder
     #   run: rm -rf /opt/hostedtoolcache
 
-    # - name: Install dependencies
-    #   run: |
-    #     apt update
-    #     apt install -y git curl
+    - name: Install dependencies
+      run: |
+        apt update
+        apt install -y git curl
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
