@@ -7,17 +7,9 @@ on:
 
 jobs:
   test:
-    runs-on: self-hosted
-
-    container:
-      image: ubuntu:latest
+    runs-on: ubuntu-latest
 
     steps:
-    - name: Install dependencies
-      run: |
-        apt update
-        apt install -y git curl
-
     - uses: actions/checkout@v4
       with:
         submodules: true
@@ -57,6 +49,11 @@ jobs:
       run: |
         apt update
         apt install -y git curl
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
 
     - uses: actions/checkout@v4
       with:
