@@ -36,7 +36,7 @@ RUN git clone --depth 1 --branch v$DOTNET_RUNTIME_VERSION https://github.com/dot
 RUN sed -i 247d src/coreclr/pal/src/misc/cgroup.cpp
 RUN sed -i 666d src/coreclr/pal/src/sync/cs.cpp
 
-RUN set -e; trap 'cat /runtime/.tools/rootfs/x64/debootstrap/debootstrap.log' EXIT; \
+RUN set -e; trap 'echo "***Start of debootstrap.log***"; cat /runtime/.tools/rootfs/x64/debootstrap/debootstrap.log; echo "***End of debootstrap.log***"' EXIT; \
     if [ $TARGETARCH = $BUILDARCH ]; then \
         ./build.sh clr -c Checked; \
     else \
