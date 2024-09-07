@@ -72,7 +72,7 @@ jobs:
 
     - name: Set MINUS_PREFIXED_PLATFORM_IF_NOT_AMD64
       run: |
-        MINUS_PREFIXED_PLATFORM_IF_NOT_AMD64=${{ runner.arch == 'X64' && '' || format('-{0}', runner.arch) }}
+        MINUS_PREFIXED_PLATFORM_IF_NOT_AMD64=${{ runner.arch != 'X64' && format('-{0}', runner.arch) || '' }}
         echo "MINUS_PREFIXED_PLATFORM_IF_NOT_AMD64=${MINUS_PREFIXED_PLATFORM_IF_NOT_AMD64,,}" >>${GITHUB_ENV}
 
     - name: Build and push backend
