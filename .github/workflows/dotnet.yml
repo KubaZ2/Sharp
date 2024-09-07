@@ -35,25 +35,12 @@ jobs:
 
     runs-on: self-hosted
 
-    container:
-      image: ghcr.io/actions/actions-runner:2.319.1
-
     permissions:
       packages: write
 
     steps:
     # - name: Delete huge unnecessary tools folder
     #   run: rm -rf /opt/hostedtoolcache
-
-    - name: Install dependencies
-      run: |
-        apt update
-        apt install -y git curl
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
 
     - uses: actions/checkout@v4
       with:
