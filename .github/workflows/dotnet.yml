@@ -48,7 +48,7 @@ jobs:
     - name: Install dependencies
       run: |
         apt update
-        apt install -y git curl
+        apt install -y git curl docker
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
