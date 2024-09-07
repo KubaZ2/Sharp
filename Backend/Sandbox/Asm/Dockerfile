@@ -3,6 +3,7 @@ ARG DOTNET_RUNTIME_VERSION=8.0.7
 ARG OS=ubuntu
 ARG OS_VERSION=24.04
 ARG OS_CODENAME=noble
+ARG MINUS_PREFIXED_PLATFORM_IF_NOT_AMD64
 
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:$DOTNET_SDK_VERSION AS build-env
 WORKDIR /src
@@ -22,7 +23,7 @@ COPY Backend/Sandbox/Asm Backend/Sandbox/Asm
 
 RUN dotnet publish Backend/Sandbox/Asm/Asm.csproj -c Release -o /app
 
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet-buildtools/prereqs:$OS-$OS_VERSION-helix-$BUILDARCH AS runtime-build-env
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet-buildtools/prereqs:$OS-$OS_VERSION$MINUS_PREFIXED_PLATFORM_IF_NOT_AMD64 AS runtime-build-env
 WORKDIR /runtime
 ARG DOTNET_RUNTIME_VERSION
 ARG OS_CODENAME
