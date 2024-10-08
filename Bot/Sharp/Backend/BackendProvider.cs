@@ -43,11 +43,10 @@ public class BackendProvider(IBackendUriProvider uriProvider, IHttpClientFactory
 
     private async ValueTask<string> ReadAsStringAsync(HttpContent content)
     {
-        StringBuilder builder = new();
-
         using var stream = await content.ReadAsStreamAsync();
         using StreamReader reader = new(stream);
 
+        StringBuilder builder = new();
         int remaining = options.Value.MaxFileSize;
         var buffer = ArrayPool<char>.Shared.Rent(CopyBufferSize);
         int bufferLength = buffer.Length;
