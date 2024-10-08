@@ -140,6 +140,7 @@ public class ResponseProvider(IOptions<Options> options, IOptions<CommandService
         {
             AttachmentCodeResult.Success => AttachmentCodeSuccessResponse<T>(),
             AttachmentCodeResult.CodeNotFound => AttachmentCodeNotFoundResponse<T>(),
+            AttachmentCodeResult.FileTooLarge => AttachmentTooLargeResponse<T>(),
             _ => throw new ArgumentOutOfRangeException(nameof(result)),
         };
     }
@@ -159,6 +160,11 @@ public class ResponseProvider(IOptions<Options> options, IOptions<CommandService
     private T AttachmentCodeNotFoundResponse<T>() where T : IMessageProperties, new()
     {
         return Error<T>("Code not found", "No code was provided.");
+    }
+
+    private T AttachmentTooLargeResponse<T>() where T : IMessageProperties, new()
+    {
+        return Error<T>("File too large", $"The file is too large. The maximum size is {options.Value.MaxFileSize} bytes.");
     }
 
     public async ValueTask<T> HelpResponseAsync<T>(ulong operationId) where T : IMessageProperties, new()

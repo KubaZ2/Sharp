@@ -10,6 +10,8 @@ public class Options
 
     [Required]
     public required RateLimitOptions RateLimits { get; set; }
+
+    public int MaxOutputSize { get; set; } = 1024 * 1024;
 }
 
 public class RateLimitOptions

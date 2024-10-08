@@ -7,6 +7,8 @@ public abstract record AttachmentCodeResult
     public record Success(string? Language, string Code) : AttachmentCodeResult;
 
     public record CodeNotFound : AttachmentCodeResult;
+
+    public record FileTooLarge : AttachmentCodeResult;
 }
 
 public interface IAttachmentCodeProvider
