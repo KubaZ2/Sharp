@@ -3,11 +3,12 @@ using System.Buffers.Text;
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Sockets;
 
+using Microsoft.Extensions.Options;
+
 namespace Sharp.Backend.Manager;
 
-public class JailSandboxProvider : ISandboxProvider
+public class JailSandboxProvider(IOptions<Options> options) : ISandboxProvider
 {
-    private const int MaxOutputSize = 1024 * 1024; // 1MiB
     private const int CopyBufferSize = 81920;
 
     public async Task ExecuteAsync(ContainerFunction function, Stream assembly, Stream output)
@@ -53,11 +54,11 @@ public class JailSandboxProvider : ISandboxProvider
         static (string, int) ThrowOutOfRange() => throw new ArgumentOutOfRangeException(nameof(function));
     }
 
-    private static async Task ReadOutputAsync(NetworkStream input, Stream output, byte[] buffer)
+    private async Task ReadOutputAsync(NetworkStream input, Stream output, byte[] buffer)
     {
         int bufferLength = buffer.Length;
         int read;
-        int remaining = MaxOutputSize;
+        int remaining = options.Value.MaxOutputSize;
         while (true)
         {
             read = await input.ReadAsync(buffer.AsMemory(0, Math.Min(bufferLength, remaining)));

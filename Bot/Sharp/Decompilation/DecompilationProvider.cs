@@ -1,6 +1,8 @@
+using Microsoft.Extensions.Options;
+
 namespace Sharp.Decompilation;
 
-public class DecompilationProvider(IDecompilerProvider decompilerProvider) : IDecompilationProvider
+public class DecompilationProvider(IDecompilerProvider decompilerProvider, IOptions<Options> options) : IDecompilationProvider
 {
     public async Task<DecompilationResult> DecompileAsync(ulong operationId, Stream assembly, Language outputLanguage)
     {
@@ -14,6 +16,10 @@ public class DecompilationProvider(IDecompilerProvider decompilerProvider) : IDe
         if (!success)
             return new DecompilationResult.Fail(outputLanguage);
 
-        return new DecompilationResult.Success(writer.ToString());
+        var stringBuilder = writer.GetStringBuilder();
+
+        var code = stringBuilder.ToString(0, Math.Min(stringBuilder.Length, options.Value.MaxFileSize));
+
+        return new DecompilationResult.Success(code);
     }
 }

@@ -1,8 +1,10 @@
+using Microsoft.Extensions.Options;
+
 using NetCord;
 
 namespace Sharp.Attachments;
 
-public class AttachmentCodeProvider(IHttpClientFactory httpClientFactory) : IAttachmentCodeProvider
+public class AttachmentCodeProvider(IHttpClientFactory httpClientFactory, IOptions<Options> options) : IAttachmentCodeProvider
 {
     public async ValueTask<AttachmentCodeResult> GetCodeAsync(IEnumerable<Attachment> attachments)
     {
@@ -10,6 +12,9 @@ public class AttachmentCodeProvider(IHttpClientFactory httpClientFactory) : IAtt
 
         if (attachment is null)
             return new AttachmentCodeResult.CodeNotFound();
+
+        if (attachment.Size > options.Value.MaxFileSize)
+            return new AttachmentCodeResult.FileTooLarge();
 
         var extension = Path.GetExtension(attachment.FileName);
 
@@ -21,8 +26,7 @@ public class AttachmentCodeProvider(IHttpClientFactory httpClientFactory) : IAtt
 
         string code;
         using (var client = httpClientFactory.CreateClient())
-        using (StreamReader reader = new(await client.GetStreamAsync(attachment.Url)))
-            code = await reader.ReadToEndAsync();
+            code = await client.GetStringAsync(attachment.Url);
 
         return new AttachmentCodeResult.Success(extension, code);
     }

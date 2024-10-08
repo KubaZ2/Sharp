@@ -17,6 +17,8 @@ public class Options
     public required InformationOptions Information { get; set; }
 
     public FormattingOptions Formatting { get; set; } = new();
+
+    public int MaxFileSize { get; set; } = 1024 * 1024;
 }
 
 public class EmojiOptions
