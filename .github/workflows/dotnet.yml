@@ -29,7 +29,7 @@ jobs:
       run: dotnet test --no-build --verbosity normal
 
   publish:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     needs: test
 
