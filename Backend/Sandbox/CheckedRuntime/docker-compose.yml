@@ -1,0 +1,6 @@
+services:
+  checked-runtime:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ghcr.io/kubaz2/sharp/checked-runtime:8.0.7

@@ -59,6 +59,26 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
+    - name: Check if checked runtime changed
+      uses: dorny/paths-filter@v3
+      id: checkedruntime
+      with:
+        filters: |
+          checkedruntime:
+            - 'Backend/Sandbox/CheckedRuntime/**'
+
+    - name: Build and push checked runtime
+      if: steps.checkedruntime.outputs.checkedruntime == 'true'
+      uses: docker/bake-action@v5
+      with:
+        source: .
+        workdir: Backend/Sandbox/CheckedRuntime
+        push: true
+        set: |
+          *.platform=linux/amd64,linux/arm64
+          *.cache-from=type=gha
+          *.cache-to=type=gha,mode=min
+
     - name: Build and push bot
       uses: docker/bake-action@v5
       with:
