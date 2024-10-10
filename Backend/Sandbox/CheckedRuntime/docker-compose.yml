@@ -1,5 +1,5 @@
 services:
-  build-reference:
+  checked-runtime:
     build:
       context: .
       dockerfile: Dockerfile
