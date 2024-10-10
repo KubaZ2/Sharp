@@ -1,7 +1,6 @@
 ARG DOTNET_SDK_VERSION=8.0
 ARG DOTNET_RUNTIME_VERSION=8.0.7
 ARG OS_CODENAME=noble
-ARG CHECKED_RUNTIME_IMAGE=ghcr.io/kubaz2/sharp/checked-runtime:$DOTNET_RUNTIME_VERSION
 
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:$DOTNET_SDK_VERSION AS build-env
 WORKDIR /src
@@ -26,7 +25,6 @@ FROM --platform=$BUILDPLATFORM ghcr.io/kubaz2/sharp/checked-runtime:$DOTNET_RUNT
 
 FROM mcr.microsoft.com/dotnet/runtime:$DOTNET_RUNTIME_VERSION-$OS_CODENAME AS runtime
 ARG DOTNET_RUNTIME_VERSION
-ARG CHECKED_RUNTIME_IMAGE
 
 COPY --from=build-env /app /app
 
