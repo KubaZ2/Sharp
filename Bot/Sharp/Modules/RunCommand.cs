@@ -37,7 +37,7 @@ public class RunCommand(ILanguageMatcher languageMatcher, ICompilationProvider c
     [Command("run", Priority = 2)]
     public async Task<ReplyMessageProperties> RunAsync(BackendArchitecture architecture)
     {
-        var result = await attachmentCodeProvider.GetCodeAsync(Context.Message.Attachments.Values);
+        var result = await attachmentCodeProvider.GetCodeAsync(Context.Message.Attachments);
 
         if (result is not AttachmentCodeResult.Success { Language: var language, Code: var code })
             return responseProvider.AttachmentCodeResultResponse<ReplyMessageProperties>(Context.Message.Id, result);

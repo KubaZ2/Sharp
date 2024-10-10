@@ -13,5 +13,5 @@ public abstract record AttachmentCodeResult
 
 public interface IAttachmentCodeProvider
 {
-    public ValueTask<AttachmentCodeResult> GetCodeAsync(IEnumerable<Attachment> attachments);
+    public ValueTask<AttachmentCodeResult> GetCodeAsync(IReadOnlyList<Attachment> attachments);
 }

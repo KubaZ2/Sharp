@@ -37,7 +37,7 @@ public static class CommandHostExtensions
 
             host.AddCommand<CommandContext>(aliases, async (IServiceProvider services, IAttachmentCodeProvider attachmentCodeProvider, CommandContext context) =>
             {
-                var result = await attachmentCodeProvider.GetCodeAsync(context.Message.Attachments.Values);
+                var result = await attachmentCodeProvider.GetCodeAsync(context.Message.Attachments);
 
                 if (result is not AttachmentCodeResult.Success { Language: var sourceLanguage, Code: var code })
                     return services.GetRequiredService<IResponseProvider>().AttachmentCodeResultResponse<ReplyMessageProperties>(context.Message.Id, result);

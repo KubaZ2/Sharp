@@ -6,12 +6,12 @@ namespace Sharp.Attachments;
 
 public class AttachmentCodeProvider(IHttpClientFactory httpClientFactory, IOptions<Options> options) : IAttachmentCodeProvider
 {
-    public async ValueTask<AttachmentCodeResult> GetCodeAsync(IEnumerable<Attachment> attachments)
+    public async ValueTask<AttachmentCodeResult> GetCodeAsync(IReadOnlyList<Attachment> attachments)
     {
-        var attachment = attachments.FirstOrDefault();
-
-        if (attachment is null)
+        if (attachments.Count is 0)
             return new AttachmentCodeResult.CodeNotFound();
+
+        var attachment = attachments[0];
 
         if (attachment.Size > options.Value.MaxFileSize)
             return new AttachmentCodeResult.FileTooLarge();

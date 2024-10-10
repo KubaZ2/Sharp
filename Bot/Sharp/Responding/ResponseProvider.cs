@@ -181,7 +181,7 @@ public class ResponseProvider(IOptions<Options> options, IOptions<CommandService
 
         var discordOptionsValue = discordOptions.Value;
 
-        var prefix = discordOptionsValue.Prefixes is { Count: > 0 } prefixes ? prefixes[0] : discordOptionsValue.Prefix;
+        var prefix = discordOptionsValue.Prefixes?.FirstOrDefault() ?? discordOptionsValue.Prefix;
 
         message.AddEmbeds(new EmbedProperties().WithDescription(
                                                 $"""

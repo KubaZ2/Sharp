@@ -59,16 +59,13 @@ services
     .AddSingleton<ILanguageMatcher, LanguageMatcher>()
     .AddSingleton<ICompilationProvider, CompilationProvider>()
     .AddSingleton<IDecompilationProvider, DecompilationProvider>()
-    .AddSingleton<IRateLimiter, RateLimiter>()
+    .AddSingleton<Sharp.RateLimits.IRateLimiter, RateLimiter>()
     .AddCommands<CommandContext>(o => o.ResultHandler = new EnhancedCommandServiceResultHandler<CommandContext>())
     .AddApplicationCommands<SlashCommandInteraction, SlashCommandContext>(o => o.ResultHandler = new EnhancedApplicationCommandServiceResultHandler<SlashCommandContext>())
     .AddComponentInteractions<ButtonInteraction, ButtonInteractionContext>(o => o.ResultHandler = new EnhancedComponentInteractionServiceResultHandler<ButtonInteractionContext>())
     .AddDiscordGateway(o =>
     {
-        o.Configuration = new()
-        {
-            Intents = GatewayIntents.GuildMessages | GatewayIntents.DirectMessages | GatewayIntents.MessageContent,
-        };
+        o.Intents = GatewayIntents.GuildMessages | GatewayIntents.DirectMessages | GatewayIntents.MessageContent;
     });
 
 var host = builder.Build();
