@@ -21,7 +21,7 @@ COPY Backend/Sandbox/Asm Backend/Sandbox/Asm
 RUN dotnet publish Backend/Sandbox/Asm/Asm.csproj -c Release -o /app
 
 # 'docker buildx use default' is needed to use local 'ghcr.io/kubaz2/sharp/checked-runtime' image
-FROM --platform=$BUILDPLATFORM ghcr.io/kubaz2/sharp/checked-runtime:$DOTNET_RUNTIME_VERSION AS checked-runtime
+FROM ghcr.io/kubaz2/sharp/checked-runtime:$DOTNET_RUNTIME_VERSION AS checked-runtime
 
 FROM mcr.microsoft.com/dotnet/runtime:$DOTNET_RUNTIME_VERSION-$OS_CODENAME AS runtime
 ARG DOTNET_RUNTIME_VERSION

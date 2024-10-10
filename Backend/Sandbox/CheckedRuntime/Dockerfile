@@ -33,6 +33,6 @@ RUN if [ $TARGETARCH = $BUILDARCH ]; then \
         ROOTFS_DIR=/runtime/.tools/rootfs/$DOTNET_ARCH ./build.sh clr -c Checked -a $DOTNET_ARCH --cross; \
     fi
 
-FROM --platform=$BUILDPLATFORM busybox:latest AS storage
+FROM scratch AS storage
 
 COPY --from=build-env /runtime/artifacts/bin/coreclr/linux.*.*/libclrjit.so /runtime/libclrjit.so
