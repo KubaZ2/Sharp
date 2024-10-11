@@ -20,15 +20,15 @@ COPY Backend/Sandbox/Asm Backend/Sandbox/Asm
 
 RUN dotnet publish Backend/Sandbox/Asm/Asm.csproj -c Release -o /app
 
-# 'docker buildx use default' is needed to use local 'ghcr.io/kubaz2/sharp/checked-runtime' image
-FROM ghcr.io/kubaz2/sharp/checked-runtime:$DOTNET_RUNTIME_VERSION AS checked-runtime
+# 'docker buildx use default' is needed to use local 'ghcr.io/kubaz2/sharp/checked-jit' image
+FROM ghcr.io/kubaz2/sharp/checked-jit:$DOTNET_RUNTIME_VERSION AS checked-jit
 
 FROM mcr.microsoft.com/dotnet/runtime:$DOTNET_RUNTIME_VERSION-$OS_CODENAME AS runtime
 ARG DOTNET_RUNTIME_VERSION
 
 COPY --from=build-env /app /app
 
-COPY --from=checked-runtime /runtime/libclrjit.so /usr/share/dotnet/shared/Microsoft.NETCore.App/$DOTNET_RUNTIME_VERSION/
+COPY --from=checked-jit /runtime/libclrjit.so /usr/share/dotnet/shared/Microsoft.NETCore.App/$DOTNET_RUNTIME_VERSION/
 
 FROM pwn.red/jail
 

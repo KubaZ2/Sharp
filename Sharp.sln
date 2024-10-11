@@ -34,10 +34,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mobius.ILasm", "Bot\Mobius.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sharp.Runtime", "Sharp.Runtime\Sharp.Runtime.csproj", "{AF8C0407-4D7C-4DAE-9155-D4A784A621BA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CheckedRuntime", "CheckedRuntime", "{451D9195-4B8F-4FE7-ACA3-49393B72D46C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CheckedJit", "CheckedJit", "{451D9195-4B8F-4FE7-ACA3-49393B72D46C}"
 	ProjectSection(SolutionItems) = preProject
-		Backend\Sandbox\CheckedRuntime\Dockerfile = Backend\Sandbox\CheckedRuntime\Dockerfile
-		Backend\Sandbox\CheckedRuntime\docker-compose.yml = Backend\Sandbox\CheckedRuntime\docker-compose.yml
+		Backend\Sandbox\CheckedJit\Dockerfile = Backend\Sandbox\CheckedJit\Dockerfile
+		Backend\Sandbox\CheckedJit\docker-compose.yml = Backend\Sandbox\CheckedJit\docker-compose.yml
 	EndProjectSection
 EndProject
 Global

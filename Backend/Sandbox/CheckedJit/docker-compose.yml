@@ -1,0 +1,6 @@
+services:
+  checked-jit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ghcr.io/kubaz2/sharp/checked-jit:8.0.7

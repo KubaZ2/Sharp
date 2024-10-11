@@ -70,33 +70,33 @@ jobs:
           *.cache-from=type=gha
           *.cache-to=type=gha,mode=min
 
-    - name: Check if checked runtime changed
+    - name: Check if checked jit might have changed
       uses: dorny/paths-filter@v3
-      id: checkedruntime
+      id: checked-jit
       with:
         filters: |
-          checkedruntime:
-            - 'Backend/Sandbox/CheckedRuntime/**'
+          checked-jit:
+            - 'Backend/Sandbox/CheckedJit/**'
             - '.github/workflows/**'
 
     - name: Set MINUS_PREFIXED_PLATFORM_IF_NOT_AMD64
-      if: steps.checkedruntime.outputs.checkedruntime == 'true'
+      if: steps.checked-jit.outputs.checked-jit == 'true'
       run: |
         MINUS_PREFIXED_PLATFORM_IF_NOT_AMD64=${{ runner.arch != 'X64' && format('-{0}', runner.arch) || '' }}
         echo "MINUS_PREFIXED_PLATFORM_IF_NOT_AMD64=${MINUS_PREFIXED_PLATFORM_IF_NOT_AMD64,,}" >>${GITHUB_ENV}
 
-    - name: Build and push checked runtime
-      if: steps.checkedruntime.outputs.checkedruntime == 'true'
+    - name: Build and push runtime with checked jit
+      if: steps.checked-jit.outputs.checked-jit == 'true'
       uses: docker/bake-action@v5
       with:
         source: .
-        workdir: Backend/Sandbox/CheckedRuntime
+        workdir: Backend/Sandbox/CheckedJit
         push: true
         set: |
           *.platform=linux/amd64,linux/arm64
           *.cache-from=type=gha
           *.cache-to=type=gha,mode=min
-          checked-runtime.args.MINUS_PREFIXED_PLATFORM_IF_NOT_AMD64=${{ env.MINUS_PREFIXED_PLATFORM_IF_NOT_AMD64 }}
+          checked-jit.args.MINUS_PREFIXED_PLATFORM_IF_NOT_AMD64=${{ env.MINUS_PREFIXED_PLATFORM_IF_NOT_AMD64 }}
 
     - name: Build and push backend
       uses: docker/bake-action@v5
