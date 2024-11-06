@@ -86,8 +86,8 @@ public class FSharpCompiler : ICompiler
     private static Diagnostic ConvertToDiagnostic(FSharpDiagnostic fSharpDiagnostic)
     {
         LinePositionSpan position = new(
-            new(fSharpDiagnostic.StartLine, fSharpDiagnostic.StartColumn),
-            new(fSharpDiagnostic.EndLine, fSharpDiagnostic.EndColumn)
+            new(fSharpDiagnostic.StartLine - 1, fSharpDiagnostic.StartColumn),
+            new(fSharpDiagnostic.EndLine - 1, fSharpDiagnostic.EndColumn)
         );
         var location = Location.Create(string.Empty, default, position);
 
