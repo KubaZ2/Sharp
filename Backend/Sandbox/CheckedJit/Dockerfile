@@ -1,4 +1,4 @@
-ARG DOTNET_RUNTIME_VERSION=8.0.7
+ARG DOTNET_RUNTIME_VERSION=9.0.0
 ARG OS=ubuntu
 ARG OS_VERSION=24.04
 ARG OS_CODENAME=noble
@@ -14,7 +14,7 @@ ARG BUILDARCH
 RUN git clone --depth 1 --branch v$DOTNET_RUNTIME_VERSION https://github.com/dotnet/runtime.git .
 
 # Asserts fail when running in pwn.red/jail, so we need to remove them
-RUN sed -i 247d src/coreclr/pal/src/misc/cgroup.cpp
+RUN sed -i 214d src/coreclr/pal/src/misc/cgroup.cpp
 RUN sed -i 666d src/coreclr/pal/src/sync/cs.cpp
 
 RUN if [ $TARGETARCH = $BUILDARCH ]; then \

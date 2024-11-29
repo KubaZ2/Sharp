@@ -19,6 +19,8 @@ public class CSharpCompiler : RoslynCompiler
         allowUnsafe: true,
         nullableContextOptions: NullableContextOptions.Enable);
 
+    private static readonly CSharpParseOptions _parseOptions = new(LanguageVersion.Preview);
+
     private static CSharpCompilationOptions GetOptions(SyntaxTree syntaxTree, CompilationOutput? output)
     {
         if (output.HasValue)
@@ -53,14 +55,14 @@ public class CSharpCompiler : RoslynCompiler
             stringBuilder.AppendLine();
         }
 
-        return CSharpSyntaxTree.ParseText(stringBuilder.ToString());
+        return CSharpSyntaxTree.ParseText(stringBuilder.ToString(), _parseOptions);
     }
 
     public override Language Language => Language.CSharp;
 
     protected override Microsoft.CodeAnalysis.Compilation CreateCompilation(string code, CompilationOutput? output)
     {
-        var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        var syntaxTree = CSharpSyntaxTree.ParseText(code, _parseOptions);
 
         return CSharpCompilation.Create("_", [_globalUsingsSyntaxTree, syntaxTree], _references, GetOptions(syntaxTree, output));
     }

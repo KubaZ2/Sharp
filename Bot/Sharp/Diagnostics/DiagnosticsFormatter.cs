@@ -31,7 +31,7 @@ public class DiagnosticsFormatter(IOptions<Options> options, IMemoryCache cache)
 
         var fields = CreateDiagnosticsFields(visibleDiagnostics, 1, embedContentLength, out var more);
 
-        IEnumerable<MessageComponentProperties>? components;
+        IEnumerable<ComponentProperties>? components;
 
         if (more)
         {

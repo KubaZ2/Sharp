@@ -6,7 +6,7 @@ namespace Sharp.CompilationResponse;
 
 public abstract record CompilationFormatResult
 {
-    public record Success(EmbedProperties Embed, IEnumerable<MessageComponentProperties>? Components) : CompilationFormatResult;
+    public record Success(EmbedProperties Embed, IEnumerable<ComponentProperties>? Components) : CompilationFormatResult;
 
     public record Expired : CompilationFormatResult;
 }

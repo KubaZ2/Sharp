@@ -28,8 +28,8 @@ public class FSharpCompiler : ICompiler
     {
         FileSystemAutoOpens.FileSystem = _fileSystem = new VirtualFileSystem();
 
-        var references = Net80.References.All.Select(r => r.FilePath!).Where(p => p is not "System.Runtime.dll").Select(p => $"-r:{p}");
-        _baseArguments = [string.Empty, "--targetprofile:netcore", "--noframework", "--nowin32manifest", .. references, $"-r:{typeof(JitGenericAttribute).Assembly.Location}"];
+        var references = Net90.References.All.Select(r => r.FilePath!).Where(p => p is not "System.Runtime.dll").Select(p => $"-r:{p}");
+        _baseArguments = [string.Empty, "--targetprofile:netcore", "--noframework", "--nowin32manifest" , "--checknulls", .. references, $"-r:{typeof(JitGenericAttribute).Assembly.Location}"];
     }
 
     private const string SourceName = "_.fs";
@@ -506,7 +506,7 @@ public class FSharpCompiler : ICompiler
             return base.NormalizePathShim(path);
         }
 
-        public override Stream OpenFileForReadShim(string filePath, [OptionalArgument] FSharpOption<bool> useMemoryMappedFile, [OptionalArgument] FSharpOption<bool> shouldShadowCopy)
+        public override Stream OpenFileForReadShim(string filePath, [OptionalArgument] FSharpOption<bool>? useMemoryMappedFile, [OptionalArgument] FSharpOption<bool>? shouldShadowCopy)
         {
             if (TryGetVirtualPath(filePath.AsMemory(), out var virtualPath))
             {
@@ -519,7 +519,7 @@ public class FSharpCompiler : ICompiler
             return base.OpenFileForReadShim(filePath, useMemoryMappedFile, shouldShadowCopy);
         }
 
-        public override Stream OpenFileForWriteShim(string filePath, [OptionalArgument] FSharpOption<FileMode> fileMode, [OptionalArgument] FSharpOption<FileAccess> fileAccess, [OptionalArgument] FSharpOption<FileShare> fileShare)
+        public override Stream OpenFileForWriteShim(string filePath, FSharpOption<FileMode>? fileMode, FSharpOption<FileAccess>? fileAccess, FSharpOption<FileShare>? fileShare)
         {
             if (TryGetVirtualPath(filePath.AsMemory(), out var virtualPath))
             {
