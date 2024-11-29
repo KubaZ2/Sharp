@@ -3,4 +3,4 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: ghcr.io/kubaz2/sharp/checked-jit:8.0.7
+    image: ghcr.io/kubaz2/sharp/checked-jit:9.0.0

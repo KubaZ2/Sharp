@@ -6,7 +6,7 @@ namespace Sharp.Compilation;
 
 public abstract class RoslynCompiler : ICompiler
 {
-    protected static readonly MetadataReference[] _references = [.. Net80.References.All, MetadataReference.CreateFromFile(typeof(JitGenericAttribute).Assembly.Location)];
+    protected static readonly MetadataReference[] _references = [.. Net90.References.All, MetadataReference.CreateFromFile(typeof(JitGenericAttribute).Assembly.Location)];
 
     public abstract Language Language { get; }
 
