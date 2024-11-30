@@ -19,6 +19,7 @@ RUN sed -i 214d src/coreclr/pal/src/misc/cgroup.cpp
 RUN sed -i 666d src/coreclr/pal/src/sync/cs.cpp
 
 RUN if [ $TARGETARCH = $BUILDARCH ]; then \
+        ./eng/install-native-dependencies.sh && \
         ./build.sh clr -c Checked; \
     else \
         case $TARGETARCH in \
