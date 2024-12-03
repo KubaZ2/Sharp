@@ -6,8 +6,6 @@ using Microsoft.FSharp.Core;
 using System.Globalization;
 using System.Diagnostics.CodeAnalysis;
 using System.Collections.Concurrent;
-using Microsoft.CodeAnalysis.Text;
-using FSharp.Compiler.Diagnostics;
 using System.Text;
 using Basic.Reference.Assemblies;
 using System.Runtime.InteropServices;
@@ -40,7 +38,7 @@ public class FSharpCompiler : ICompiler
         return [.. _baseArguments, $"-o:{projectPath}/{OutputName}", $"{projectPath}/{SourceName}"];
     }
 
-    public async ValueTask<bool> CompileAsync(ulong operationId, string code, ICollection<Diagnostic> diagnostics, Stream assembly, CompilationOutput? output)
+    public async ValueTask<bool> CompileAsync(ulong operationId, string code, ICollection<CompilationDiagnostic> diagnostics, Stream assembly, CompilationOutput? output)
     {
         var fileSystem = _fileSystem;
         var checker = FSharpChecker.Create(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
@@ -70,7 +68,13 @@ public class FSharpCompiler : ICompiler
             int resultDiagnosticsLength = resultDiagnostics.Length;
             for (int i = 0; i < resultDiagnosticsLength; i++)
             {
-                var diagnostic = ConvertToDiagnostic(resultDiagnostics[i]);
+                var resultDiagnostic = resultDiagnostics[i];
+
+                CompilationDiagnostic diagnostic = new((DiagnosticSeverity)resultDiagnostic.Severity.Tag,
+                                                       $"FS{resultDiagnostic.ErrorNumber:D4}",
+                                                       new(resultDiagnostic.StartLine - 1, resultDiagnostic.StartColumn),
+                                                       resultDiagnostic.Message);
+
                 diagnostics.Add(diagnostic);
             }
 
@@ -81,19 +85,6 @@ public class FSharpCompiler : ICompiler
             fileSystem.TryDeleteVirtualEntry(projectVirtualPath);
             pool.Return(bytes);
         }
-    }
-
-    private static Diagnostic ConvertToDiagnostic(FSharpDiagnostic fSharpDiagnostic)
-    {
-        LinePositionSpan position = new(
-            new(fSharpDiagnostic.StartLine - 1, fSharpDiagnostic.StartColumn),
-            new(fSharpDiagnostic.EndLine - 1, fSharpDiagnostic.EndColumn)
-        );
-        var location = Location.Create(string.Empty, default, position);
-
-        var severity = (DiagnosticSeverity)fSharpDiagnostic.Severity.Tag;
-
-        return Diagnostic.Create($"FS{fSharpDiagnostic.ErrorNumber:D4}", "FSharp", fSharpDiagnostic.Message, severity, severity, true, severity is DiagnosticSeverity.Warning ? 1 : 0, location: location);
     }
 
     private class NonDisposableStream(Stream stream) : Stream

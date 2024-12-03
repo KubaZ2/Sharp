@@ -1,6 +1,3 @@
-using Microsoft.CodeAnalysis;
-
-
 namespace Sharp.Compilation;
 
 public class CompilationProvider(ICompilerProvider compilerProvider) : ICompilationProvider
@@ -11,7 +8,7 @@ public class CompilationProvider(ICompilerProvider compilerProvider) : ICompilat
         if (compiler is null)
             return new CompilationResult.CompilerNotFound(language);
 
-        List<Diagnostic> diagnostics = [];
+        List<CompilationDiagnostic> diagnostics = [];
         MemoryStream assembly = new();
         var success = await compiler.CompileAsync(operationId, code, diagnostics, assembly, output);
 

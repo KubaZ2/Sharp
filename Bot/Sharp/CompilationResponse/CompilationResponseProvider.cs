@@ -1,9 +1,10 @@
-using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Options;
 
 using NetCord;
 
 using NetCord.Rest;
+
+using Sharp.Compilation;
 
 using Sharp.Diagnostics;
 
@@ -35,7 +36,7 @@ public class CompilationFormatter(IDiagnosticsFormatter diagnosticsFormatter, IO
         };
     }
 
-    public CompilationFormatResult.Success CompilationResponse(ulong operationId, bool success, IReadOnlyList<Diagnostic> diagnostics)
+    public CompilationFormatResult.Success CompilationResponse(ulong operationId, bool success, IReadOnlyList<CompilationDiagnostic> diagnostics)
     {
         var (title, description) = GetContent(success);
 

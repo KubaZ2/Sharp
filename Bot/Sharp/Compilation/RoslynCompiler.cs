@@ -12,7 +12,7 @@ public abstract class RoslynCompiler : ICompiler
 
     protected abstract Microsoft.CodeAnalysis.Compilation CreateCompilation(string code, CompilationOutput? output);
 
-    public ValueTask<bool> CompileAsync(ulong operationId, string code, ICollection<Diagnostic> diagnostics, Stream assembly, CompilationOutput? output)
+    public ValueTask<bool> CompileAsync(ulong operationId, string code, ICollection<CompilationDiagnostic> diagnostics, Stream assembly, CompilationOutput? output)
     {
         var compilation = CreateCompilation(code, output);
 
@@ -22,7 +22,18 @@ public abstract class RoslynCompiler : ICompiler
         int length = resultDiagnostics.Length;
 
         for (int i = 0; i < length; i++)
-            diagnostics.Add(resultDiagnostics[i]);
+        {
+            var resultDiagnostic = resultDiagnostics[i];
+
+            var location = resultDiagnostic.Location.GetMappedLineSpan().Span.Start;
+
+            CompilationDiagnostic diagnostic = new(resultDiagnostic.Severity,
+                                                   resultDiagnostic.Id,
+                                                   location,
+                                                   resultDiagnostic.GetMessage());
+
+            diagnostics.Add(diagnostic);
+        }
 
         return new(result.Success);
     }

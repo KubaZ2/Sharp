@@ -1,6 +1,6 @@
-using Microsoft.CodeAnalysis;
-
 using NetCord.Rest;
+
+using Sharp.Compilation;
 
 namespace Sharp.CompilationResponse;
 
@@ -15,5 +15,5 @@ public interface ICompilationFormatter
 {
     public CompilationFormatResult CompilationResponse(ulong operationId, bool success, int page);
 
-    public CompilationFormatResult.Success CompilationResponse(ulong operationId, bool success, IReadOnlyList<Diagnostic> diagnostics);
+    public CompilationFormatResult.Success CompilationResponse(ulong operationId, bool success, IReadOnlyList<CompilationDiagnostic> diagnostics);
 }

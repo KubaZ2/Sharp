@@ -1,6 +1,6 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using NetCord.Rest;
 
-using NetCord.Rest;
+using Sharp.Compilation;
 
 namespace Sharp.Diagnostics;
 
@@ -15,5 +15,5 @@ public interface IDiagnosticsFormatter
 {
     public DiagnosticsFormatResult FormatDiagnostics(ulong operationId, bool success, int page, int embedContentLength);
 
-    public DiagnosticsFormatResult.Success FormatDiagnostics(ulong operationId, bool success, IReadOnlyList<Diagnostic> diagnostics, int embedContentLength);
+    public DiagnosticsFormatResult.Success FormatDiagnostics(ulong operationId, bool success, IReadOnlyList<CompilationDiagnostic> diagnostics, int embedContentLength);
 }

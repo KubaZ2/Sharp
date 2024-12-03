@@ -47,7 +47,7 @@ public class ResponseProvider(IOptions<Options> options, IOptions<CommandService
         return Error<T>("Compiler not found", $"The compiler for the language {nameFormatter.Format(language)} was not found.");
     }
 
-    private T CompilationFailResponse<T>(ulong operationId, IReadOnlyList<Diagnostic> diagnostics) where T : IMessageProperties, new()
+    private T CompilationFailResponse<T>(ulong operationId, IReadOnlyList<CompilationDiagnostic> diagnostics) where T : IMessageProperties, new()
     {
         var compilationFormatResult = compilationFormatter.CompilationResponse(operationId, false, diagnostics);
 
@@ -101,7 +101,7 @@ public class ResponseProvider(IOptions<Options> options, IOptions<CommandService
         return Error<T>("An error occurred", reason);
     }
 
-    public T DecompilationResponse<T>(ulong operationId, Language language, string decompiledCode, List<Diagnostic> diagnostics) where T : IMessageProperties, new()
+    public T DecompilationResponse<T>(ulong operationId, Language language, string decompiledCode, List<CompilationDiagnostic> diagnostics) where T : IMessageProperties, new()
     {
         T message = new();
 
@@ -115,7 +115,7 @@ public class ResponseProvider(IOptions<Options> options, IOptions<CommandService
         return message;
     }
 
-    public T RunResponse<T>(ulong operationId, Language language, string output, List<Diagnostic> diagnostics) where T : IMessageProperties, new()
+    public T RunResponse<T>(ulong operationId, Language language, string output, List<CompilationDiagnostic> diagnostics) where T : IMessageProperties, new()
     {
         T message = new();
 

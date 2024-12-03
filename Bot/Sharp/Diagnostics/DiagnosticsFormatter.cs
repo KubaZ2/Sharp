@@ -5,11 +5,13 @@ using Microsoft.Extensions.Options;
 using NetCord;
 using NetCord.Rest;
 
+using Sharp.Compilation;
+
 namespace Sharp.Diagnostics;
 
 public class DiagnosticsFormatter(IOptions<Options> options, IMemoryCache cache) : IDiagnosticsFormatter
 {
-    private record DiagnosticsCacheEntry(IReadOnlyList<Diagnostic> Diagnostics);
+    private record DiagnosticsCacheEntry(IReadOnlyList<CompilationDiagnostic> Diagnostics);
 
     public DiagnosticsFormatResult FormatDiagnostics(ulong operationId, bool success, int page, int embedContentLength)
     {
@@ -25,9 +27,9 @@ public class DiagnosticsFormatter(IOptions<Options> options, IMemoryCache cache)
         return new DiagnosticsFormatResult.Success(fields, [actionRow]);
     }
 
-    public DiagnosticsFormatResult.Success FormatDiagnostics(ulong operationId, bool success, IReadOnlyList<Diagnostic> diagnostics, int embedContentLength)
+    public DiagnosticsFormatResult.Success FormatDiagnostics(ulong operationId, bool success, IReadOnlyList<CompilationDiagnostic> diagnostics, int embedContentLength)
     {
-        IReadOnlyList<Diagnostic> visibleDiagnostics = [.. diagnostics.Where(d => d.Severity is not DiagnosticSeverity.Hidden)];
+        IReadOnlyList<CompilationDiagnostic> visibleDiagnostics = [.. diagnostics.Where(d => d.Severity is not DiagnosticSeverity.Hidden)];
 
         var fields = CreateDiagnosticsFields(visibleDiagnostics, 1, embedContentLength, out var more);
 
@@ -47,11 +49,11 @@ public class DiagnosticsFormatter(IOptions<Options> options, IMemoryCache cache)
 
     private static ActionRowProperties CreateActionRow(bool success, int page, bool previousDisabled, bool nextDisabled)
     {
-        return new(
+        return
         [
             new ButtonProperties($"diagnostics:{success}:{page - 1}", new EmojiProperties("⬅️"), ButtonStyle.Secondary) { Disabled = previousDisabled },
             new ButtonProperties($"diagnostics:{success}:{page + 1}", new EmojiProperties("➡️"), ButtonStyle.Secondary) { Disabled = nextDisabled }
-        ]);
+        ];
     }
 
     private string GetSeverityEmoji(DiagnosticSeverity severity)
@@ -65,7 +67,7 @@ public class DiagnosticsFormatter(IOptions<Options> options, IMemoryCache cache)
         };
     }
 
-    private List<EmbedFieldProperties> CreateDiagnosticsFields(IReadOnlyList<Diagnostic> diagnostics, int page, int length, out bool more)
+    private List<EmbedFieldProperties> CreateDiagnosticsFields(IReadOnlyList<CompilationDiagnostic> diagnostics, int page, int length, out bool more)
     {
         int diagnosticCount = diagnostics.Count;
         var pageStartIndex = GetPageStartIndex(diagnostics, page, length);
@@ -107,7 +109,7 @@ public class DiagnosticsFormatter(IOptions<Options> options, IMemoryCache cache)
         return fields;
     }
 
-    private int? GetPageStartIndex(IReadOnlyList<Diagnostic> diagnostics, int page, int length)
+    private int? GetPageStartIndex(IReadOnlyList<CompilationDiagnostic> diagnostics, int page, int length)
     {
         int diagnosticIndex = 0;
         int diagnosticCount = diagnostics.Count;
@@ -158,16 +160,13 @@ public class DiagnosticsFormatter(IOptions<Options> options, IMemoryCache cache)
         return diagnosticIndex;
     }
 
-    private string FormatName(Diagnostic diagnostic)
+    private string FormatName(CompilationDiagnostic diagnostic)
     {
-        var position = diagnostic.Location.GetMappedLineSpan().Span.Start;
-        return $"{GetSeverityEmoji(diagnostic.Severity)} {diagnostic.Id} ({position.Line + 1},{position.Character + 1})";
+        var location = diagnostic.Location;
+        return $"{GetSeverityEmoji(diagnostic.Severity)} {diagnostic.Id} ({location.Line + 1},{location.Character + 1})";
     }
 
-    private static string FormatValue(Diagnostic diagnostic)
-    {
-        return diagnostic.GetMessage();
-    }
+    private static string FormatValue(CompilationDiagnostic diagnostic) => diagnostic.Message;
 
     private static string LimitLength(string value, int maxLength)
     {
