@@ -23,7 +23,7 @@ public class ILCompiler : ICompiler
         return Driver.Target.Dll;
     }
 
-    public ValueTask<bool> CompileAsync(ulong operationId, string code, ICollection<Diagnostic> diagnostics, Stream assembly, CompilationOutput? output)
+    public ValueTask<bool> CompileAsync(ulong operationId, string code, ICollection<CompilationDiagnostic> diagnostics, Stream assembly, CompilationOutput? output)
     {
         CompilationLogger logger = new(diagnostics);
         Driver driver = new(logger, GetTarget(output), new() { ResourceResolver = NullManifestResourceResolver.Default });
@@ -57,7 +57,7 @@ public class ILCompiler : ICompiler
         }
     }
 
-    private class CompilationLogger(ICollection<Diagnostic> diagnostics) : ILogger
+    private class CompilationLogger(ICollection<CompilationDiagnostic> diagnostics) : ILogger
     {
         public void Error(string message)
         {
@@ -85,16 +85,9 @@ public class ILCompiler : ICompiler
 
         public void Add(Mono.ILASM.Location? location, string message, DiagnosticSeverity severity)
         {
-            Location? l;
-            if (location is null)
-                l = null;
-            else
-            {
-                LinePosition position = new(location.line - 1, location.column - 1);
-                l = Location.Create(string.Empty, default, new(position, position));
-            }
+            var position = location is null ? LinePosition.Zero : new(location.line - 1, location.column);
 
-            diagnostics.Add(Diagnostic.Create("IL", "IL", message, severity, severity, true, severity is DiagnosticSeverity.Warning ? 1 : 0, location: l));
+            diagnostics.Add(new(severity, "IL", position, message));
         }
     }
 
