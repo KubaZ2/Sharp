@@ -70,12 +70,10 @@ public class FSharpCompiler : ICompiler
             {
                 var resultDiagnostic = resultDiagnostics[i];
 
-                CompilationDiagnostic diagnostic = new((DiagnosticSeverity)resultDiagnostic.Severity.Tag,
-                                                       $"FS{resultDiagnostic.ErrorNumber:D4}",
-                                                       new(resultDiagnostic.StartLine - 1, resultDiagnostic.StartColumn),
-                                                       resultDiagnostic.Message);
-
-                diagnostics.Add(diagnostic);
+                diagnostics.Add(new((DiagnosticSeverity)resultDiagnostic.Severity.Tag,
+                                    $"FS{resultDiagnostic.ErrorNumber:D4}",
+                                    new(resultDiagnostic.StartLine - 1, resultDiagnostic.StartColumn),
+                                    resultDiagnostic.Message));
             }
 
             return resultCode is 0;

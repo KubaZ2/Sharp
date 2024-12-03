@@ -25,14 +25,10 @@ public abstract class RoslynCompiler : ICompiler
         {
             var resultDiagnostic = resultDiagnostics[i];
 
-            var location = resultDiagnostic.Location.GetMappedLineSpan().Span.Start;
-
-            CompilationDiagnostic diagnostic = new(resultDiagnostic.Severity,
-                                                   resultDiagnostic.Id,
-                                                   location,
-                                                   resultDiagnostic.GetMessage());
-
-            diagnostics.Add(diagnostic);
+            diagnostics.Add(new(resultDiagnostic.Severity,
+                                resultDiagnostic.Id,
+                                resultDiagnostic.Location.GetMappedLineSpan().Span.Start,
+                                resultDiagnostic.GetMessage()));
         }
 
         return new(result.Success);
