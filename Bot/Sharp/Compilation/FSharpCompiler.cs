@@ -1,16 +1,19 @@
-using Microsoft.CodeAnalysis;
-using FSharp.Compiler.CodeAnalysis;
-using Microsoft.FSharp.Control;
-using FSharp.Compiler.IO;
-using Microsoft.FSharp.Core;
-using System.Globalization;
-using System.Diagnostics.CodeAnalysis;
-using System.Collections.Concurrent;
-using System.Text;
-using Basic.Reference.Assemblies;
-using System.Runtime.InteropServices;
 using System.Buffers;
+using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Text;
+
+using Basic.Reference.Assemblies;
+
+using FSharp.Compiler.CodeAnalysis;
+using FSharp.Compiler.IO;
+
+using Microsoft.CodeAnalysis;
+using Microsoft.FSharp.Control;
+using Microsoft.FSharp.Core;
 
 namespace Sharp.Compilation;
 
@@ -26,8 +29,20 @@ public class FSharpCompiler : ICompiler
     {
         FileSystemAutoOpens.FileSystem = _fileSystem = new VirtualFileSystem();
 
-        var references = Net90.References.All.Select(r => r.FilePath!).Where(p => p is not "System.Runtime.dll").Select(p => $"-r:{p}");
-        _baseArguments = [string.Empty, "--targetprofile:netcore", "--noframework", "--nowin32manifest" , "--checknulls", .. references, $"-r:{typeof(JitGenericAttribute).Assembly.Location}"];
+        var references = Net90.References.All.Select(r => r.FilePath!)
+                                             .Where(p => p is not "System.Runtime.dll")
+                                             .Select(p => $"-r:{p}");
+
+        _baseArguments =
+        [
+            string.Empty,
+            "--targetprofile:netcore",
+            "--noframework",
+            "--nowin32manifest",
+            "--checknulls",
+            .. references,
+            $"-r:{typeof(JitGenericAttribute).Assembly.Location}"
+        ];
     }
 
     private const string SourceName = "_.fs";
@@ -251,7 +266,7 @@ public class FSharpCompiler : ICompiler
         }
     }
 
-    private class VirtualFileSystem : DefaultFileSystem
+    private sealed class VirtualFileSystem : DefaultFileSystem
     {
         private class VirtualFileStorage
         {

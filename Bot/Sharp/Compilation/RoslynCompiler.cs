@@ -17,7 +17,7 @@ public abstract class RoslynCompiler : ICompiler
         var compilation = CreateCompilation(code, output);
 
         var result = compilation.Emit(assembly);
-        
+
         var resultDiagnostics = result.Diagnostics;
         int length = resultDiagnostics.Length;
 
