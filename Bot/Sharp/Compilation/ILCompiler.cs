@@ -85,7 +85,7 @@ public class ILCompiler : ICompiler
 
         public void Add(Mono.ILASM.Location? location, string message, DiagnosticSeverity severity)
         {
-            var position = location is null ? LinePosition.Zero : new(location.line - 1, location.column);
+            var position = location is null ? LinePosition.Zero : new(Math.Max(location.line - 1, 0), location.column);
 
             diagnostics.Add(new(severity, "IL", position, message));
         }
