@@ -2,7 +2,7 @@
 
 **Sharp** is a powerful Discord bot that runs, decompiles, and shows JIT disassembly of .NET languages.
 
-[**Invite it now!**](https://discord.com/oauth2/authorize?client_id=803324257194082314&permissions=274877908992&scope=bot)
+[**Invite it now!**](https://discord.com/oauth2/authorize?client_id=803324257194082314&permissions=274877974528&scope=bot)
 
 ## 🛠️ Getting Started
 
@@ -18,7 +18,7 @@
 
 ## 🔗 Links
 
-- [Invitation Link](https://discord.com/oauth2/authorize?client_id=803324257194082314&permissions=274877908992&scope=bot)
+- [Invitation Link](https://discord.com/oauth2/authorize?client_id=803324257194082314&permissions=274877974528&scope=bot)
 - [Support Discord](https://discord.gg/meaSHTGyUH)
 - [Terms of Service](TOS.md)
 - [Privacy Policy](PRIVACY.md)
