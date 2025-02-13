@@ -14,12 +14,12 @@ using NetCord.Services.ComponentInteractions;
 
 using Sharp;
 using Sharp.Attachments;
-using Sharp.Names;
 using Sharp.Backend;
 using Sharp.Compilation;
 using Sharp.CompilationResponse;
 using Sharp.Decompilation;
 using Sharp.Diagnostics;
+using Sharp.Names;
 using Sharp.RateLimits;
 using Sharp.Responding;
 using Sharp.ResultHandlers;

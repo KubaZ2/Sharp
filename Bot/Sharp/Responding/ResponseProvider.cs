@@ -4,16 +4,16 @@ using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Options;
 
 using NetCord;
+using NetCord.Hosting.Services.Commands;
 using NetCord.Rest;
+using NetCord.Services.Commands;
 
 using Sharp.Attachments;
-using Sharp.Names;
 using Sharp.Backend;
 using Sharp.Compilation;
 using Sharp.CompilationResponse;
 using Sharp.Decompilation;
-using NetCord.Hosting.Services.Commands;
-using NetCord.Services.Commands;
+using Sharp.Names;
 
 namespace Sharp.Responding;
 
