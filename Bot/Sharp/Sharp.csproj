@@ -9,18 +9,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Basic.Reference.Assemblies.Net90" Version="1.7.9" />
+    <PackageReference Include="Basic.Reference.Assemblies.Net90" Version="1.8.0" />
     <PackageReference Include="ICSharpCode.Decompiler" Version="8.2.0.7535" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0-3.final " />
-    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic" Version="4.12.0-3.final " />
-    <PackageReference Include="FSharp.Compiler.Service" Version="43.9.100" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.0" />
-    <PackageReference Include="NetCord" Version="1.0.0-alpha.333" />
-    <PackageReference Include="NetCord.Services" Version="1.0.0-alpha.333" />
-    <PackageReference Include="NetCord.Hosting" Version="1.0.0-alpha.333" />
-    <PackageReference Include="NetCord.Hosting.Services" Version="1.0.0-alpha.333" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic" Version="4.12.0" />
+    <PackageReference Include="FSharp.Compiler.Service" Version="43.9.201" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.2" />
+    <PackageReference Include="NetCord" Version="1.0.0-alpha.347" />
+    <PackageReference Include="NetCord.Services" Version="1.0.0-alpha.347" />
+    <PackageReference Include="NetCord.Hosting" Version="1.0.0-alpha.347" />
+    <PackageReference Include="NetCord.Hosting.Services" Version="1.0.0-alpha.347" />
   </ItemGroup>
 
   <ItemGroup>

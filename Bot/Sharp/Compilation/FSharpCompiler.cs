@@ -78,7 +78,7 @@ public class FSharpCompiler : ICompiler
         {
             var arguments = GetArguments(projectFullPath);
 
-            var (resultDiagnostics, resultCode) = await FSharpAsync.StartAsTask(checker.Compile(arguments, null), null, null);
+            var (resultDiagnostics, resultException) = await FSharpAsync.StartAsTask(checker.Compile(arguments, null), null, null);
 
             int resultDiagnosticsLength = resultDiagnostics.Length;
             for (int i = 0; i < resultDiagnosticsLength; i++)
@@ -91,7 +91,7 @@ public class FSharpCompiler : ICompiler
                                     resultDiagnostic.Message));
             }
 
-            return resultCode is 0;
+            return resultException is null;
         }
         finally
         {
