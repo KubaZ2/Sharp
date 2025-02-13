@@ -87,7 +87,7 @@ public class FSharpCompiler : ICompiler
 
                 diagnostics.Add(new((DiagnosticSeverity)resultDiagnostic.Severity.Tag,
                                     $"FS{resultDiagnostic.ErrorNumber:D4}",
-                                    new(resultDiagnostic.StartLine - 1, resultDiagnostic.StartColumn),
+                                    new(Math.Max(resultDiagnostic.StartLine - 1, 0), resultDiagnostic.StartColumn),
                                     resultDiagnostic.Message));
             }
 
