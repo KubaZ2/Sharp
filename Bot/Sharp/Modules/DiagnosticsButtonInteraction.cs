@@ -7,7 +7,7 @@ using Sharp.Responding;
 
 namespace Sharp.Modules;
 
-public class DiagnosticsButtonInteraction(ICompilationFormatter compilationFormatter, IResponseProvider responseProvider) : ComponentInteractionModule<ButtonInteractionContext>
+public class DiagnosticsButtonInteraction(ICompilationFormatter compilationFormatter, IResponseProvider responseProvider) : ComponentInteractionModule<MessageComponentInteractionContext>
 {
     [ComponentInteraction("diagnostics")]
     public InteractionCallback Diagnostics(bool success, int page)

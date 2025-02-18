@@ -60,9 +60,12 @@ services
     .AddSingleton<ICompilationProvider, CompilationProvider>()
     .AddSingleton<IDecompilationProvider, DecompilationProvider>()
     .AddSingleton<Sharp.RateLimits.IRateLimiter, RateLimiter>()
-    .AddCommands<CommandContext>(o => o.ResultHandler = new EnhancedCommandServiceResultHandler<CommandContext>())
-    .AddApplicationCommands<SlashCommandInteraction, SlashCommandContext>(o => o.ResultHandler = new EnhancedApplicationCommandServiceResultHandler<SlashCommandContext>())
-    .AddComponentInteractions<ButtonInteraction, ButtonInteractionContext>(o => o.ResultHandler = new EnhancedComponentInteractionServiceResultHandler<ButtonInteractionContext>())
+    .AddCommands(o => o.ResultHandler = new EnhancedCommandServiceResultHandler<CommandContext>())
+    .AddApplicationCommands(o => o.ResultHandler = new EnhancedApplicationCommandServiceResultHandler<ApplicationCommandContext>())
+    .AddComponentInteractions<MessageComponentInteraction, MessageComponentInteractionContext>(o =>
+    {
+        o.ResultHandler = new EnhancedComponentInteractionServiceResultHandler<MessageComponentInteractionContext>();
+    })
     .AddDiscordGateway(o =>
     {
         o.Intents = GatewayIntents.GuildMessages | GatewayIntents.DirectMessages | GatewayIntents.MessageContent;

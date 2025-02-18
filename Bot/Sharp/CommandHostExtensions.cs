@@ -25,17 +25,17 @@ public static class CommandHostExtensions
         foreach (var (language, aliases) in typeof(Language).GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
                                                             .Select(f => ((Language)f.GetRawConstantValue()!, f.GetCustomAttribute<LanguageAliasesAttribute>()!.Aliases)))
         {
-            host.AddCommand<CommandContext>(aliases, (IServiceProvider services, CommandContext context, [CommandParameter(Remainder = true)] CodeBlock codeBlock) =>
+            host.AddCommand(aliases, (IServiceProvider services, CommandContext context, [CommandParameter(Remainder = true)] CodeBlock codeBlock) =>
             {
                 return HandleAsync(codeBlock.Formatter, codeBlock.Code, context, services, language);
             }, priority: 2);
 
-            host.AddCommand<CommandContext>(aliases, (IServiceProvider services, CommandContext context, [CommandParameter(Remainder = true)] string code) =>
+            host.AddCommand(aliases, (IServiceProvider services, CommandContext context, [CommandParameter(Remainder = true)] string code) =>
             {
                 return HandleAsync(null, code, context, services, language);
             }, priority: 1);
 
-            host.AddCommand<CommandContext>(aliases, async (IServiceProvider services, IAttachmentCodeProvider attachmentCodeProvider, CommandContext context) =>
+            host.AddCommand(aliases, async (IServiceProvider services, IAttachmentCodeProvider attachmentCodeProvider, CommandContext context) =>
             {
                 var result = await attachmentCodeProvider.GetCodeAsync(context.Message.Attachments);
 
@@ -93,12 +93,12 @@ public static class CommandHostExtensions
 
     public static IHost AddHelpCommands(this IHost host)
     {
-        host.AddCommand<CommandContext>(["help"], (IResponseProvider responseProvider, CommandContext context) =>
+        host.AddCommand(["help"], (IResponseProvider responseProvider, CommandContext context) =>
         {
             return responseProvider.HelpResponseAsync<ReplyMessageProperties>(context.Message.Id).AsTask();
         });
 
-        host.AddSlashCommand<SlashCommandContext>("help", "Shows how to use the bot", (IResponseProvider responseProvider, SlashCommandContext context) =>
+        host.AddSlashCommand("help", "Shows how to use the bot", (IResponseProvider responseProvider, ApplicationCommandContext context) =>
         {
             return responseProvider.HelpResponseAsync<InteractionMessageProperties>(context.Interaction.Id).AsTask();
         });
