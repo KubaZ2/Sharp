@@ -166,7 +166,7 @@ public class DiagnosticsFormatter(IOptions<Options> options, IMemoryCache cache)
         return $"{GetSeverityEmoji(diagnostic.Severity)} {diagnostic.Id} ({location.Line + 1},{location.Character + 1})";
     }
 
-    private static string FormatValue(CompilationDiagnostic diagnostic) => diagnostic.Message;
+    private static string FormatValue(CompilationDiagnostic diagnostic) => Format.Escape(diagnostic.Message);
 
     private static string LimitLength(string value, int maxLength)
     {
